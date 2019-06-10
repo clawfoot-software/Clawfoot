@@ -15,7 +15,7 @@ namespace Clawfoot.Utilities.Caches
     {
         private ConcurrentDictionary<Type, ModelForeignKeyProperties> Cache { get; set; }
 
-        internal ForeignKeyPropertyCache()
+        public ForeignKeyPropertyCache()
         {
             Cache = new ConcurrentDictionary<Type, ModelForeignKeyProperties>();
         }
@@ -26,7 +26,7 @@ namespace Clawfoot.Utilities.Caches
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        internal ModelForeignKeyProperties GetOrAdd(Type type)
+        public ModelForeignKeyProperties GetOrAdd(Type type)
         {
             if (!Contains(type))
             {
@@ -65,7 +65,7 @@ namespace Clawfoot.Utilities.Caches
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        internal bool Contains(Type type)
+        public bool Contains(Type type)
         {
             return Cache.ContainsKey(type);
         }

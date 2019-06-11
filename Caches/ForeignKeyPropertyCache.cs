@@ -11,7 +11,7 @@ namespace Clawfoot.Utilities.Caches
     /// <summary>
     /// The cache of <see cref="ModelForeignKeyProperties"/>
     /// </summary>
-    public class ForeignKeyPropertyCache
+    public class ForeignKeyPropertyCache : IForeignKeyPropertyCache
     {
         private ConcurrentDictionary<Type, ModelForeignKeyProperties> Cache { get; set; }
 

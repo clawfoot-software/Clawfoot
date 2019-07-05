@@ -5,9 +5,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Status\GenericStatus.Generic.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove=".gitignore" />
     <None Remove="LICENSE.md" />
     <None Remove="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Status\GenericStatus.Generic.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Clawfoot.Core\Clawfoot.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -15,23 +15,22 @@ namespace Clawfoot.Utilities.Status
 
         public IImmutableList<IGenericError> Errors => _errors.ToImmutableList();
 
+        /// <inheritdoc/>
         public bool Success => _errors.Count == 0;
 
+        /// <inheritdoc/>
         public bool HasErrors => _errors.Count > 0;
 
+        /// <inheritdoc/>
         public string Message
         {
             get => Success
                 ? _successMessage
-                : $"Failed with {_errors.Count} error" + (_errors.Count == 1 ? "" : "s");
+                : $"Failed with {_errors.Count} error(s)"; 
             set => _successMessage = value;
         }
 
-        /// <summary>
-        /// Combines all error messages into a single string
-        /// </summary>
-        /// <param name="seperator"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public string ToString(string seperator = "\n")
         {
             if (_errors.Count > 0)
@@ -41,11 +40,7 @@ namespace Clawfoot.Utilities.Status
             return string.Empty;
         }
 
-        /// <summary>
-        /// Combines all user-friendly error messages into a single string
-        /// </summary>
-        /// <param name="seperator"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public string ToUserFriendyString(string seperator = "\n")
         {
             if (_errors.Count > 0)
@@ -55,6 +50,7 @@ namespace Clawfoot.Utilities.Status
             return string.Empty;
         }
 
+        /// <inheritdoc/>
         public void CombineStatuses(IGenericStatus status)
         {
             _errors.AddRange(status.Errors);
@@ -65,13 +61,15 @@ namespace Clawfoot.Utilities.Status
             }
         }
 
-        protected IGenericStatus AddError(string message)
+        /// <inheritdoc/>
+        public IGenericStatus AddError(string message)
         {
             _errors.Add(new GenericError(message));
             return this;
         }
 
-        protected IGenericStatus AddError(string message, string userMessage)
+        /// <inheritdoc/>
+        public IGenericStatus AddError(string message, string userMessage)
         {
             _errors.Add(new GenericError(message, userMessage));
             return this;

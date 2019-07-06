@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clawfoot.Builders", "Clawfoot.Builders\Clawfoot.Builders.csproj", "{5FD74CED-9F37-49F1-A636-2F8DD7E354F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clawfoot.Builders", "Clawfoot.Builders\Clawfoot.Builders.csproj", "{5FD74CED-9F37-49F1-A636-2F8DD7E354F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clawfoot.Utilities", "Clawfoot.Utilities\Clawfoot.Utilities.csproj", "{AD94A1A0-416E-4D99-9C82-3E6C379AD422}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clawfoot.Core", "Clawfoot.Core\Clawfoot.Core.csproj", "{CBBF5A4A-F0AC-4873-9AB6-1596E9AFA811}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clawfoot.Core", "Clawfoot.Core\Clawfoot.Core.csproj", "{CBBF5A4A-F0AC-4873-9AB6-1596E9AFA811}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clawfoot.Utilities", "Clawfoot.Utilities\Clawfoot.Utilities.csproj", "{432DEFA5-D01A-437B-9660-67587A55EB0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{5FD74CED-9F37-49F1-A636-2F8DD7E354F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FD74CED-9F37-49F1-A636-2F8DD7E354F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FD74CED-9F37-49F1-A636-2F8DD7E354F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AD94A1A0-416E-4D99-9C82-3E6C379AD422}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD94A1A0-416E-4D99-9C82-3E6C379AD422}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AD94A1A0-416E-4D99-9C82-3E6C379AD422}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AD94A1A0-416E-4D99-9C82-3E6C379AD422}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CBBF5A4A-F0AC-4873-9AB6-1596E9AFA811}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CBBF5A4A-F0AC-4873-9AB6-1596E9AFA811}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBBF5A4A-F0AC-4873-9AB6-1596E9AFA811}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBBF5A4A-F0AC-4873-9AB6-1596E9AFA811}.Release|Any CPU.Build.0 = Release|Any CPU
+		{432DEFA5-D01A-437B-9660-67587A55EB0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{432DEFA5-D01A-437B-9660-67587A55EB0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{432DEFA5-D01A-437B-9660-67587A55EB0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{432DEFA5-D01A-437B-9660-67587A55EB0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

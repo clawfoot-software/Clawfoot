@@ -1,11 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net461;netcoreapp2.0</TargetFrameworks>
     <Authors>Douglas Gaskell</Authors>
     <Company>Clawfoot Software</Company>
     <Product />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/clawfoot-software/Clawfoot/tree/master/Clawfoot.Utilities</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/clawfoot-software/Clawfoot/blob/master/LICENSE.md</PackageLicenseUrl>
+    <Copyright>2019 Douglas Gaskell</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

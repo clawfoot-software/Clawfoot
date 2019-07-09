@@ -13,6 +13,59 @@ namespace Clawfoot.Utilities.Status
         private readonly List<IGenericError> _errors = new List<IGenericError>();
         private string _successMessage = DefaultSuccessMessage;
 
+        /// <summary>
+        /// Create a generic status
+        /// </summary>
+        public GenericStatus() { }
+
+        /// <summary>
+        /// Create a generic status
+        /// </summary>
+        /// <param name="successMessage">The default success message</param>
+        public GenericStatus(string successMessage)
+        {
+            if (!String.IsNullOrWhiteSpace(successMessage))
+            {
+                _successMessage = successMessage;
+            }
+        }
+
+        /// <summary>
+        /// Helper method that creates a <see cref="GenericStatus"/> with no errors
+        /// </summary>
+        /// <param name="successMessage">The default success message</param>
+        /// <returns></returns>
+        public static IGenericStatus CreateAsSuccess(string successMessage = null)
+        {
+            return new GenericStatus(successMessage);
+        }
+
+        /// <summary>
+        /// Helper method that creates a <see cref="GenericStatus"/> with an error message
+        /// </summary>
+        /// <param name="message">The error message</param>
+        /// <returns></returns>
+        public static IGenericStatus CreateWithError(string message)
+        {
+            GenericStatus status = new GenericStatus();
+            status.AddError(message);
+            return status;
+        }
+
+        /// <summary>
+        /// Helper method that creates a <see cref="GenericStatus"/> with an error message
+        /// </summary>
+        /// <param name="message">The error message</param>
+        /// <param name="userMessage">The user friendly error message</param>
+        /// <returns></returns>
+        public static IGenericStatus CreateWithError(string message, string userMessage)
+        {
+            GenericStatus status = new GenericStatus();
+            status.AddError(message, userMessage);
+            return status;
+        }
+
+        /// <inheritdoc/>
         public IImmutableList<IGenericError> Errors => _errors.ToImmutableList();
 
         /// <inheritdoc/>
@@ -51,7 +104,7 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
-        public void CombineStatuses(IGenericStatus status)
+        public void MergeStatuses(IGenericStatus status)
         {
             _errors.AddRange(status.Errors);
 

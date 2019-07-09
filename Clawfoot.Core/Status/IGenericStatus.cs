@@ -32,7 +32,7 @@ namespace Clawfoot.Core.Status
         /// If the provided status has a different success message, and no errors, replaces this statuses success message with the provided status
         /// </summary>
         /// <param name="status"></param>
-        void CombineStatuses(IGenericStatus status);
+        void MergeStatuses(IGenericStatus status);
 
         /// <summary>
         /// Combines all error messages into a single string

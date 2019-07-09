@@ -5,11 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Clawfoot.Utilities
+namespace Clawfoot.Utilities.AutoMapper
 {
+    /// <summary>
+    /// The container that holds the automapper mappings for a specific <see cref="AutomapperConfigType"/>
+    /// </summary>
     public class AutoMapperConfigContainer
     {
-        public AutoMapperConfigContainer(AutomapperConfigType configType, MapperConfigurationExpression configExpression)
+        internal AutoMapperConfigContainer(AutomapperConfigType configType, MapperConfigurationExpression configExpression)
         {
             ConfigType = configType;
             ConfigExpression = configExpression;

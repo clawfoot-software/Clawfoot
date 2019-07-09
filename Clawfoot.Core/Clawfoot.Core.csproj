@@ -8,7 +8,8 @@
     <Copyright>2019 Douglas Gaskell</Copyright>
     <PackageLicenseUrl>https://github.com/clawfoot-software/Clawfoot/blob/master/LICENSE.md</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/clawfoot-software/Clawfoot/tree/master/Clawfoot.Core</RepositoryUrl>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

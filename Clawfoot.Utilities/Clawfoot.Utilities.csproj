@@ -9,7 +9,7 @@
     <RepositoryUrl>https://github.com/clawfoot-software/Clawfoot/tree/master/Clawfoot.Utilities</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/clawfoot-software/Clawfoot/blob/master/LICENSE.md</PackageLicenseUrl>
     <Copyright>2019 Douglas Gaskell</Copyright>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

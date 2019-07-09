@@ -8,11 +8,11 @@ using System.Text;
 namespace Clawfoot.Utilities.AutoMapper
 {
     /// <summary>
-    /// The container that holds the automapper mappings for a specific <see cref="AutomapperConfigType"/>
+    /// The container that holds the automapper mappings for a specific Configuration Type
     /// </summary>
-    public class AutoMapperConfigContainer
+    internal class AutoMapperConfigContainer<TMapperConfigTypes> : IAutoMapperConfigContainer<TMapperConfigTypes>
     {
-        internal AutoMapperConfigContainer(AutomapperConfigType configType, MapperConfigurationExpression configExpression)
+        internal AutoMapperConfigContainer(TMapperConfigTypes configType, MapperConfigurationExpression configExpression)
         {
             ConfigType = configType;
             ConfigExpression = configExpression;
@@ -25,7 +25,7 @@ namespace Clawfoot.Utilities.AutoMapper
         /// <summary>
         /// The mapper configuration type
         /// </summary>
-        public AutomapperConfigType ConfigType { get; private set; }
+        public TMapperConfigTypes ConfigType { get; private set; }
 
         /// <summary>
         /// The Mapper configuration itself, can be used to create a new mapper

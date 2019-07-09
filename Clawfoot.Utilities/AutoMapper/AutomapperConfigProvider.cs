@@ -8,38 +8,38 @@ using System.Text;
 namespace Clawfoot.Utilities.AutoMapper
 {
     /// <inheritdoc/>
-    public class AutoMapperConfigProvider : IAutoMapperConfigProvider<AutomapperConfigType>
+    public class AutoMapperConfigProvider<TMapperConfigTypes> : IAutoMapperConfigProvider<TMapperConfigTypes>
     {
         /// <summary>
         /// Creates a new instance of <see cref="AutoMapperConfigProvider"/>
         /// </summary>
         public AutoMapperConfigProvider()
         {
-            MapperCache = new Dictionary<AutomapperConfigType, AutoMapperConfigContainer>();
+            MapperCache = new Dictionary<TMapperConfigTypes, AutoMapperConfigContainer<TMapperConfigTypes>>();
         }
 
-        private Dictionary<AutomapperConfigType, AutoMapperConfigContainer> MapperCache { get; set; }
+        private Dictionary<TMapperConfigTypes, AutoMapperConfigContainer<TMapperConfigTypes>> MapperCache { get; set; }
 
         /// <inheritdoc/>
-        public void ConfigureDefaultMapper(MapperConfigurationExpression config)
+        public void ConfigureDefaultMapper(MapperConfigurationExpression config, TMapperConfigTypes defaultType)
         {
             Mapper.Initialize(config);
 
-            AddOrReplaceConfiguration(AutomapperConfigType.Default, config);
+            AddOrReplaceConfiguration(defaultType, config);
         }
 
         /// <inheritdoc/>
-        public MapperConfiguration AddConfiguration(AutomapperConfigType type, MapperConfigurationExpression config)
+        public MapperConfiguration AddConfiguration(TMapperConfigTypes type, MapperConfigurationExpression config)
         {
             VerifyMapperDoesntExist(type);
 
-            AutoMapperConfigContainer container = new AutoMapperConfigContainer(type, config);
+            AutoMapperConfigContainer<TMapperConfigTypes> container = new AutoMapperConfigContainer<TMapperConfigTypes>(type, config);
             MapperCache.Add(type, container);
             return container.Config;
         }
 
         /// <inheritdoc/>
-        public MapperConfiguration AddConfiguration(AutomapperConfigType type, params Action<IMapperConfigurationExpression>[] configs)
+        public MapperConfiguration AddConfiguration(TMapperConfigTypes type, params Action<IMapperConfigurationExpression>[] configs)
         {
             VerifyMapperDoesntExist(type);
 
@@ -53,7 +53,7 @@ namespace Clawfoot.Utilities.AutoMapper
         }
 
         /// <inheritdoc/>
-        public MapperConfiguration AppendToConfiguration(AutomapperConfigType type, params Action<IMapperConfigurationExpression>[] configs)
+        public MapperConfiguration AppendToConfiguration(TMapperConfigTypes type, params Action<IMapperConfigurationExpression>[] configs)
         {
             VerifyMapperExists(type);
 
@@ -62,7 +62,7 @@ namespace Clawfoot.Utilities.AutoMapper
         }
 
         /// <inheritdoc/>
-        public MapperConfiguration AddOrReplaceConfiguration(AutomapperConfigType type, MapperConfigurationExpression config)
+        public MapperConfiguration AddOrReplaceConfiguration(TMapperConfigTypes type, MapperConfigurationExpression config)
         {
             if (MapperCache.ContainsKey(type))
             {
@@ -73,7 +73,7 @@ namespace Clawfoot.Utilities.AutoMapper
         }
 
         /// <inheritdoc/>
-        public MapperConfiguration AddOrReplaceConfiguration(AutomapperConfigType type, params Action<IMapperConfigurationExpression>[] configs)
+        public MapperConfiguration AddOrReplaceConfiguration(TMapperConfigTypes type, params Action<IMapperConfigurationExpression>[] configs)
         {
             if (MapperCache.ContainsKey(type))
             {
@@ -84,7 +84,7 @@ namespace Clawfoot.Utilities.AutoMapper
         }
 
         /// <inheritdoc/>
-        public IMapper GetMapper(AutomapperConfigType type)
+        public IMapper GetMapper(TMapperConfigTypes type)
         {
             if (!MapperCache.ContainsKey(type))
             {
@@ -94,7 +94,7 @@ namespace Clawfoot.Utilities.AutoMapper
             return MapperCache[type].Mapper;
         }
 
-        private void VerifyMapperExists(AutomapperConfigType type)
+        private void VerifyMapperExists(TMapperConfigTypes type)
         {
             if (!MapperCache.ContainsKey(type))
             {
@@ -102,7 +102,7 @@ namespace Clawfoot.Utilities.AutoMapper
             }
         }
 
-        private void VerifyMapperDoesntExist(AutomapperConfigType type)
+        private void VerifyMapperDoesntExist(TMapperConfigTypes type)
         {
             if (MapperCache.ContainsKey(type))
             {

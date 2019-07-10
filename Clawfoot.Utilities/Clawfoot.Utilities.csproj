@@ -17,21 +17,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Status\GenericStatus.Generic.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove=".gitignore" />
     <None Remove="LICENSE.md" />
     <None Remove="README.md" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Status\GenericStatus.Generic.cs" />
+    <ProjectReference Include="..\Clawfoot.Core\Clawfoot.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Clawfoot.Core\Clawfoot.Core.csproj" />
+    <Folder Include="Tests\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="8.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
   </ItemGroup>
 
 </Project>

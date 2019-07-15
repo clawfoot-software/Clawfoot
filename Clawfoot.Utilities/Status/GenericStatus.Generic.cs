@@ -21,5 +21,14 @@ namespace Clawfoot.Utilities.Status
             get => HasErrors ? default(T) : _result;
             set => _result = value;
         }
+
+        /// <summary>
+        /// Sets the result of the status
+        /// </summary>
+        /// <param name="result"></param>
+        public void SetResult(T result)
+        {
+            Result = result;
+        }
     }
 }

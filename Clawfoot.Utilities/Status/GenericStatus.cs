@@ -115,16 +115,49 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
-        public IGenericStatus AddError(string message)
+        public IGenericStatus AddError(string message, string userMessage = "")
         {
-            _errors.Add(new GenericError(message));
+            _errors.Add(new GenericError(message, userMessage));
             return this;
         }
 
         /// <inheritdoc/>
-        public IGenericStatus AddError(string message, string userMessage)
+        public IGenericStatus AddErrorIfNull<T>(T value, string message, string userMessage = "") where T : class
         {
-            _errors.Add(new GenericError(message, userMessage));
+            if (value is null)
+            {
+                return AddError(message, userMessage);
+            }
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IGenericStatus AddErrorIfNull<T>(T? value, string message, string userMessage = "") where T : struct
+        {
+            if (value is null)
+            {
+                return AddError(message, userMessage);
+            }
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IGenericStatus AddErrorIfNullOrDefault<T>(T value, string message, string userMessage = "") where T : class
+        {
+            if (value is null || value == default(T))
+            {
+                return AddError(message, userMessage);
+            }
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IGenericStatus AddErrorIfNullOrDefault<T>(T? value, string message, string userMessage = "") where T : struct
+        {
+            if (value is null || value.Value.Equals(default(T)))
+            {
+                return AddError(message, userMessage);
+            }
             return this;
         }
     }

@@ -9,7 +9,7 @@ namespace Clawfoot.Core.Status
         public GenericError(string message, string userMessage = "")
         {
             Message = message;
-            UserMessage = userMessage;
+            UserMessage = string.IsNullOrEmpty(userMessage) ? String.Empty : userMessage;
         }
 
         string Message;

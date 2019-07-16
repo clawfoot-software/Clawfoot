@@ -114,6 +114,7 @@ namespace Clawfoot.Utilities.Status
         public void MergeStatuses(IGenericStatus status)
         {
             _errors.AddRange(status.Errors);
+            _exceptions.AddRange(status.Exceptions);
 
             if (!HasErrors)
             {

@@ -11,6 +11,7 @@ namespace Clawfoot.Utilities.Status
     {
         internal const string DefaultSuccessMessage = "Success";
         private readonly List<IGenericError> _errors = new List<IGenericError>();
+        private readonly List<Exception> _exceptions = new List<Exception>();
         private string _successMessage = DefaultSuccessMessage;
 
         /// <summary>
@@ -66,13 +67,19 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
-        public IImmutableList<IGenericError> Errors => _errors.ToImmutableList();
+        public IEnumerable<IGenericError> Errors => _errors.AsEnumerable();
+
+        /// <inheritdoc/>
+        public IEnumerable<Exception> Exceptions => _exceptions.AsEnumerable();
 
         /// <inheritdoc/>
         public bool Success => _errors.Count == 0;
 
         /// <inheritdoc/>
         public bool HasErrors => _errors.Count > 0;
+
+        /// <inheritdoc/>
+        public bool HasExceptions => _exceptions.Count > 0;
 
         /// <inheritdoc/>
         public string Message
@@ -112,6 +119,14 @@ namespace Clawfoot.Utilities.Status
             {
                 _successMessage = status.Message;
             }
+        }
+
+        /// <inheritdoc/>
+        public IGenericStatus AddException(Exception ex)
+        {
+            _exceptions.Add(ex);
+            AddError(ex.Message);
+            return this;
         }
 
         /// <inheritdoc/>

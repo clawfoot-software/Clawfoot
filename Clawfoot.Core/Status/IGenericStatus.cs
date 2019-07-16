@@ -10,7 +10,12 @@ namespace Clawfoot.Core.Status
         /// <summary>
         /// The list of errors of this status
         /// </summary>
-        IImmutableList<IGenericError> Errors { get; }
+        IEnumerable<IGenericError> Errors { get; }
+
+        /// <summary>
+        /// The list of exceptions contained in this status
+        /// </summary>
+        IEnumerable<Exception> Exceptions { get; }
 
         /// <summary>
         /// If there are no errors this is true
@@ -21,6 +26,11 @@ namespace Clawfoot.Core.Status
         /// If there are errors this is true
         /// </summary>
         bool HasErrors { get; }
+
+        /// <summary>
+        /// If the status contains exceptions
+        /// </summary>
+        bool HasExceptions { get; }
 
         /// <summary>
         /// The message of this status, does not combine error messages. Use ToString() instead
@@ -48,7 +58,13 @@ namespace Clawfoot.Core.Status
         /// <returns></returns>
         string ToUserFriendyString(string seperator = "\n");
 
-
+        /// <summary>
+        /// Adds the provided exception to the status.
+        /// This also adds the exception message as <see langword="abstract"/>new error
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <returns></returns>
+        IGenericStatus AddException(Exception ex);
 
         /// <summary>
         /// Adds a new error to the status

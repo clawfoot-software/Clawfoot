@@ -45,24 +45,24 @@ namespace Clawfoot.Utilities.Status
         /// Helper method that creates a <see cref="GenericStatus"/> with an error message
         /// </summary>
         /// <param name="message">The error message</param>
+        /// <param name="userMessage">The user friendly error message</param>
         /// <returns></returns>
-        public static IGenericStatus CreateWithError(string message)
+        public static IGenericStatus CreateWithError(string message, string userMessage = "")
         {
             GenericStatus status = new GenericStatus();
-            status.AddError(message);
+            status.AddError(message, userMessage);
             return status;
         }
 
         /// <summary>
-        /// Helper method that creates a <see cref="GenericStatus"/> with an error message
+        /// Helper method that creates a <see cref="GenericStatus"/> with the provided exception
         /// </summary>
-        /// <param name="message">The error message</param>
-        /// <param name="userMessage">The user friendly error message</param>
+        /// <param name="ex">The exception</param>
         /// <returns></returns>
-        public static IGenericStatus CreateWithError(string message, string userMessage)
+        public static IGenericStatus CreateWithException(Exception ex)
         {
             GenericStatus status = new GenericStatus();
-            status.AddError(message, userMessage);
+            status.AddException(ex);
             return status;
         }
 

@@ -9,12 +9,14 @@ namespace Clawfoot.Utilities
     /// <summary>
     /// A dictionary where multiple values can be returned for a single key
     /// </summary>
-    /// <typeparam name="V"></typeparam>
-    public class MultiMap<V> : IEnumerable<KeyValuePair<string, List<V>>>
+    /// <typeparam name="T">The type of the value held in this multimap</typeparam>
+    public class MultiMap<T> : IEnumerable<KeyValuePair<string, List<T>>>
     {
-        Dictionary<string, List<V>> _dictionary =
-            new Dictionary<string, List<V>>();
+        Dictionary<string, List<T>> _dictionary = new Dictionary<string, List<T>>();
 
+        /// <summary>
+        /// The count of key value pairs cotained in the dictionary
+        /// </summary>
         public int Count
         {
             get
@@ -22,22 +24,35 @@ namespace Clawfoot.Utilities
                 return _dictionary.Count;
             }
         }
-        public void Add(string key, V value)
+
+        /// <summary>
+        /// Add a new value with the provided key
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void Add(string key, T value)
         {
-            List<V> list;
-            if (this._dictionary.TryGetValue(key, out list))
+            List<T> list;
+            if (_dictionary.TryGetValue(key, out list))
             {
                 list.Add(value);
             }
             else
             {
-                list = new List<V>();
-                list.Add(value);
-                this._dictionary[key] = list;
+                list = new List<T>()
+                {
+                    value
+                };
+
+                _dictionary[key] = list;
             }
         }
 
-        public IEnumerator<KeyValuePair<string, List<V>>> GetEnumerator()
+        /// <summary>
+        /// Eumerate the KeyValuePairs contained within the dictionary
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<KeyValuePair<string, List<T>>> GetEnumerator()
         {
             foreach (var item in _dictionary)
             {
@@ -50,23 +65,31 @@ namespace Clawfoot.Utilities
             return GetEnumerator();
         }
 
+        /// <summary>
+        /// The collection of keys within the dictionary
+        /// </summary>
         public IEnumerable<string> Keys
         {
             get
             {
-                return this._dictionary.Keys;
+                return _dictionary.Keys;
             }
         }
 
-        public List<V> this[string key]
+        /// <summary>
+        /// Get the collection of values associated with this key
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public List<T> this[string key]
         {
             get
             {
-                List<V> list;
-                if (!this._dictionary.TryGetValue(key, out list))
+                List<T> list;
+                if (!_dictionary.TryGetValue(key, out list))
                 {
-                    list = new List<V>();
-                    this._dictionary[key] = list;
+                    list = new List<T>();
+                    _dictionary[key] = list;
                 }
                 return list;
             }

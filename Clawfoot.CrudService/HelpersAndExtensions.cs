@@ -3,6 +3,7 @@ using Clawfoot.CrudService.Models;
 using Clawfoot.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,6 +106,35 @@ namespace Clawfoot.CrudService
             }
 
             return bestMatch;
+        }
+
+        //Inpsired by EfCore.GenericServices
+        /// <summary>
+        /// Copies the keys from the provided entity back to the Dto it's associated with based on common property names
+        /// </summary>
+        /// <typeparam name="TDto">The Dto Type</typeparam>
+        /// <param name="newEntity">The newly created entity</param>
+        /// <param name="dto">The DTO instance</param>
+        /// <param name="description">The EntityTypeDescription created from <see cref="DbContext.GetEntityDescription()"/></param>
+        public static void CopyBackKeysFromEntityToDto<TDto>(this object newEntity, TDto dto, EntityTypeDescription description)
+        {
+            List<IKey> primaryKeys = description.EfEntityType.GetKeys().Where(x => x.IsPrimaryKey()).ToList();
+            List<PropertyInfo> keyProperties = primaryKeys.Single().Properties.Select(x => x.PropertyInfo).ToList();
+
+            PropertyInfo[] dtoKeyProperies = typeof(TDto).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (PropertyInfo entityKey in keyProperties)
+            {
+                PropertyInfo dtoMatchingProperty =
+                    dtoKeyProperies.SingleOrDefault(
+                        x => x.Name == entityKey.Name && x.PropertyType == entityKey.PropertyType);
+                if (dtoMatchingProperty == null)
+                {
+                    continue;
+                }
+
+                dtoMatchingProperty.SetValue(dto, entityKey.GetValue(newEntity));
+            }
         }
     }
 }

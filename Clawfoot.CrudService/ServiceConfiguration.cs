@@ -1,6 +1,7 @@
 ﻿using Clawfoot.Core.Enums;
 using Clawfoot.Core.Interfaces;
 using Clawfoot.Extensions;
+using Clawfoot.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
@@ -18,12 +19,11 @@ namespace Clawfoot.CrudService
         /// <returns></returns>
         public static IServiceCollection AddDefaultCrudService(this IServiceCollection services)
         {
-            services.EnsureServiceRegistered(Utilities.ServiceConfiguration.ServicesCollection[ServiceTypes.DefaultAutoMapperProvider]);
-            services.EnsureServiceRegistered(Utilities.ServiceConfiguration.ServicesCollection[ServiceTypes.ForeignKeyPropertyCache]);
+            services.AddDefaultAutoMapperProvider();
+            services.AddForeignKeyPropertyCache();
 
             services.TryAddTransient<ICrudService, CrudService>();
             return services;
         }
-
     }
 }

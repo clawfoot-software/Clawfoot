@@ -51,9 +51,9 @@ namespace Clawfoot.Utilities
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddCustomAutoMapperProvider<TConfigType>(this IServiceCollection services)
+        public static IServiceCollection AddCustomAutoMapperProvider<TMapperConfigType>(this IServiceCollection services) where TMapperConfigType : System.Enum
         {
-            return services.AddSingleton<IAutoMapperConfigProvider<TConfigType>, AutoMapperConfigProvider<TConfigType>>();
+            return services.AddSingleton<IAutoMapperConfigProvider<TMapperConfigType>, AutoMapperConfigProvider<TMapperConfigType>>();
         }
 
         /// <summary>

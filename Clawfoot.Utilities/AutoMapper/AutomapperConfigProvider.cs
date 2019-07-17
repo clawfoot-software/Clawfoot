@@ -8,7 +8,7 @@ using System.Text;
 namespace Clawfoot.Utilities.AutoMapper
 {
     /// <inheritdoc/>
-    public class AutoMapperConfigProvider<TMapperConfigTypes> : IAutoMapperConfigProvider<TMapperConfigTypes>
+    public class AutoMapperConfigProvider<TMapperConfigTypes> : IAutoMapperConfigProvider<TMapperConfigTypes> where TMapperConfigTypes : System.Enum
     {
         /// <summary>
         /// Creates a new instance of <see cref="AutoMapperConfigProvider"/>

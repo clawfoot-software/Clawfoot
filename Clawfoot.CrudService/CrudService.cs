@@ -22,14 +22,8 @@ namespace Clawfoot.CrudService
     /// </summary>
     public class CrudService : CrudService<DbContext>
     {
-        public CrudService(DbContext context, ForeignKeyPropertyCache propertyCache, AutoMapperConfigProvider<AutomapperConfigType> autoMapperConfig)
-            : base(context, propertyCache, autoMapperConfig)
-        {
-            if (context is null)
-            {
-                throw new ArgumentNullException("The DbContext class is null. Please ensure it is registered with the DI container");
-            }
-        }
+        public CrudService(DbContext context, ForeignKeyPropertyCache propertyCache, AutoMapperConfigProvider<AutomapperConfigType> autoMapperConfigProvider)
+            : base(context, propertyCache, autoMapperConfigProvider) { }
     }
 
     /// <summary>
@@ -41,18 +35,20 @@ namespace Clawfoot.CrudService
     {
         private readonly TContext _context;
         private readonly ForeignKeyPropertyCache _propertyCache;
-        private readonly AutoMapperConfigProvider<AutomapperConfigType> _autoMapperConfig;
+        private readonly AutoMapperConfigProvider<AutomapperConfigType> _autoMapperConfigProvider;
 
-        public CrudService(TContext context, ForeignKeyPropertyCache propertyCache, AutoMapperConfigProvider<AutomapperConfigType> autoMapperConfig)
+        public CrudService(TContext context, ForeignKeyPropertyCache propertyCache, AutoMapperConfigProvider<AutomapperConfigType> autoMapperConfigProvider)
         {
             _context = context ?? throw new ArgumentNullException("The DbContext class is null. Please ensure it is registered with the DI container");
             _propertyCache = propertyCache ?? throw new ArgumentNullException("The ForeignKeyPropertyCache is null. Please ensure it is registered with the DI container");
-            _autoMapperConfig = autoMapperConfig ?? throw new ArgumentNullException("The AutoMapperConfigProvider is null. Please ensure it is registered with the DI container");
+            _autoMapperConfigProvider = autoMapperConfigProvider ?? throw new ArgumentNullException("The AutoMapperConfigProvider is null. Please ensure it is registered with the DI container");
         }
 
         //TODO
         // Add some sort of ingrained error handler into this that catches exceptions that are thrown during validations
         // Like how GenericLibraries does
+
+        //TODO
         // Expand relations doesn't work with non DTO's on the Read methods
 
         /// <inheritdoc/>
@@ -78,7 +74,7 @@ namespace Clawfoot.CrudService
             else
             {
                 AutomapperConfigType mapperType = expandRelations ? AutomapperConfigType.Default : AutomapperConfigType.NoExpandedRelations;
-                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityType, _autoMapperConfig.GetMapper(mapperType));
+                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityType, _autoMapperConfigProvider.GetMapper(mapperType));
                 result = ((IQueryable<T>)mapper.Accessor.GetDtoQueryable()).ToList();
             }
             return result;
@@ -99,7 +95,7 @@ namespace Clawfoot.CrudService
             {
                 AutomapperConfigType mapperType = expandRelations ? AutomapperConfigType.Default : AutomapperConfigType.NoExpandedRelations;
 
-                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityType, _autoMapperConfig.GetMapper(mapperType));
+                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityType, _autoMapperConfigProvider.GetMapper(mapperType));
                 result = ((IQueryable<T>)mapper.Accessor.GetDtoQueryableByEntityKey(key)).SingleOrDefault();
             }
 
@@ -126,7 +122,7 @@ namespace Clawfoot.CrudService
             {
                 AutomapperConfigType mapperType = expandRelations ? AutomapperConfigType.Default : AutomapperConfigType.NoExpandedRelations;
 
-                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityType, _autoMapperConfig.GetMapper(mapperType));
+                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityType, _autoMapperConfigProvider.GetMapper(mapperType));
                 result = ((DbSet<T>)mapper.Accessor.GetDbSet()).Where(whereExpression).SingleOrDefault();
             }
 
@@ -163,7 +159,7 @@ namespace Clawfoot.CrudService
             else
             {
                 object entityInstance = Activator.CreateInstance(entityDescription.EntityType);
-                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityDescription.EntityType, _autoMapperConfig.GetMapper(AutomapperConfigType.Default));
+                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityDescription.EntityType, _autoMapperConfigProvider.GetMapper(AutomapperConfigType.Default));
                 object entity = mapper.Accessor.GetEntityFromDto(entityOrDto, entityInstance);
                 _context.Add(entity);
                 _context.SaveChanges();
@@ -203,7 +199,7 @@ namespace Clawfoot.CrudService
             }
             else
             {
-                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityDescription.EntityType, _autoMapperConfig.GetMapper(AutomapperConfigType.Default));
+                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityDescription.EntityType, _autoMapperConfigProvider.GetMapper(AutomapperConfigType.Default));
                 PropertyInfo key = (PropertyInfo)mapper.Accessor.EntityKey;
                 PropertyInfo dtoKey = typeof(T).GetProperties().ToList().FindBestMatch(key);
 
@@ -227,7 +223,7 @@ namespace Clawfoot.CrudService
                 _context.Entry(entity).State = EntityState.Detached;
             }
 
-            IMapper mapper = _autoMapperConfig.GetMapper(AutomapperConfigType.Default);
+            IMapper mapper = _autoMapperConfigProvider.GetMapper(AutomapperConfigType.Default);
             var toUpdate = mapper.Map(entityOrDto, typeof(T), entityDescription.EntityType);
 
             if (_context.Entry(toUpdate).State == EntityState.Detached)
@@ -264,7 +260,7 @@ namespace Clawfoot.CrudService
             }
             else
             {
-                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityDescription.EntityType, _autoMapperConfig.GetMapper(AutomapperConfigType.Default));
+                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityDescription.EntityType, _autoMapperConfigProvider.GetMapper(AutomapperConfigType.Default));
                 PropertyInfo key = (PropertyInfo)mapper.Accessor.EntityKey;
                 PropertyInfo dtoKey = typeof(T).GetProperties().ToList().FindBestMatch(key);
 
@@ -298,7 +294,7 @@ namespace Clawfoot.CrudService
             }
             else
             {
-                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityDescription.EntityType, _autoMapperConfig.GetMapper(AutomapperConfigType.Default));
+                GenericMapperMaker mapper = new GenericMapperMaker(_context, typeof(T), entityDescription.EntityType, _autoMapperConfigProvider.GetMapper(AutomapperConfigType.Default));
                 entity = mapper.Accessor.GetEntityByKey(key);
             }
 

@@ -32,7 +32,7 @@ namespace Clawfoot.Utilities
         };
 
         /// <summary>
-        /// Registers the default <see cref="IAutoMapperConfigProvider{TMapperConfigTypes}"/> with the DI container
+        /// Registers the default <see cref="IAutoMapperConfigProvider{TMapperConfigTypes}"/> with the DI container if it does not already exist
         /// This uses <see cref="AutomapperConfigType"/> as the Config Type
         /// </summary>
         /// <param name="services"></param>
@@ -57,7 +57,7 @@ namespace Clawfoot.Utilities
         }
 
         /// <summary>
-        /// Registers the <see cref="IForeignKeyPropertyCache"/> with the DI container
+        /// Registers the <see cref="IForeignKeyPropertyCache"/> with the DI container if it does not already exist
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>

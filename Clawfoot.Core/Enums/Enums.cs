@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -29,5 +30,16 @@ namespace Clawfoot.Core.Enums
         /// A Contains() expression
         /// </summary>
         Contains = 0
+    }
+
+    /// <summary>
+    /// Service types provided by Clawfoot projects
+    /// Intended for use when registering with a <see cref="IServiceCollection "/> DI container
+    /// </summary>
+    public enum ServiceTypes
+    {
+        DefaultAutoMapperProvider = 1,
+        ForeignKeyPropertyCache = 2,
+        CrudService = 3
     }
 }

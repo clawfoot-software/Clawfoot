@@ -10,7 +10,7 @@ namespace Clawfoot.Utilities.AutoMapper
     /// <summary>
     /// The AutoMapper configuration provider. This is used when multiple configurations may be needed per model
     /// </summary>
-    public interface IAutoMapperConfigProvider<TMapperConfigTypes>
+    public interface IAutoMapperConfigProvider<TMapperConfigTypes> where TMapperConfigTypes : System.Enum
     {
         /// <summary>
         /// Configures the static Mapper instance and adds provided config to the MapperCache as the default

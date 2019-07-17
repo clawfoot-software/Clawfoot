@@ -111,7 +111,7 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
-        public void MergeStatuses(IGenericStatus status)
+        public IGenericStatus MergeStatuses(IGenericStatus status)
         {
             _errors.AddRange(status.Errors);
             _exceptions.AddRange(status.Exceptions);
@@ -120,6 +120,8 @@ namespace Clawfoot.Utilities.Status
             {
                 _successMessage = status.Message;
             }
+
+            return this;
         }
 
         /// <inheritdoc/>

@@ -13,6 +13,44 @@ namespace Clawfoot.Utilities.Status
     {
         private T _result;
 
+
+        public GenericStatus(){}
+
+        /// <summary>
+        /// Creates a <see cref="GenericStatus{T}"/> with the result and sucess message
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="successMessage"></param>
+        public GenericStatus(T result, string successMessage = null)
+            :base(successMessage)
+        {
+            _result = result;
+        }
+
+        /// <summary>
+        /// Helper method that creates a <see cref="GenericStatus{T}"/> with a sucess message and a result
+        /// </summary>
+        /// <param name="result">The result of this generic</param>
+        /// <param name="successMessage">The default success message</param>
+        /// <returns></returns>
+        public static IGenericStatus<T> CreateAsSuccess(T result, string successMessage = null)
+        {
+            return new GenericStatus<T>(result, successMessage);
+        }
+
+        /// <summary>
+        /// Helper method that creates a <see cref="GenericStatus{T}"/> with an error message
+        /// </summary>
+        /// <param name="message">The error message</param>
+        /// <param name="userMessage">The user friendly error message</param>
+        /// <returns></returns>
+        new public static IGenericStatus<T> CreateWithError(string message, string userMessage = "")
+        {
+            GenericStatus<T> status = new GenericStatus<T>();
+            status.AddError(message, userMessage);
+            return status;
+        }
+
         /// <summary>
         /// The returned result
         /// </summary>

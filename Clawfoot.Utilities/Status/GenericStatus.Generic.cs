@@ -52,6 +52,33 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <summary>
+        /// Invokes the delegate, and if it throws an exception, records it in a new GenericStatus.
+        /// If success, return the result of the delegate as a new GenericStatus
+        /// </summary>
+        /// <param name="func">The delegate</param>
+        /// <param name="keepException">To keep the exception in the stus, or just record the error message</param>
+        /// <returns></returns>
+        public static IGenericStatus<T> InvokeAndReturnStatusResult<T>(Func<T> func, bool keepException = false)
+        {
+            try
+            {
+                T result = func.Invoke();
+                return GenericStatus<T>.CreateAsSuccess(result);
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    return GenericStatus<T>.CreateWithError(ex.Message);
+                }
+
+                GenericStatus<T> status = new GenericStatus<T>();
+                status.AddException(ex);
+                return status;
+            }
+        }
+
+        /// <summary>
         /// The returned result
         /// </summary>
         public T Result
@@ -60,10 +87,7 @@ namespace Clawfoot.Utilities.Status
             set => _result = value;
         }
 
-        /// <summary>
-        /// Sets the result of the status
-        /// </summary>
-        /// <param name="result"></param>
+        /// <inheritdoc/>
         public void SetResult(T result)
         {
             Result = result;

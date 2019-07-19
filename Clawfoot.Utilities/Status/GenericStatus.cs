@@ -178,5 +178,28 @@ namespace Clawfoot.Utilities.Status
             }
             return this;
         }
+
+        /// <inheritdoc/>
+        public TOut InvokeAndReturnResult<TOut>(Func<TOut> func, bool keepException = false)
+        {
+            try
+            {
+                TOut result = func.Invoke();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    AddError(ex.Message);
+                }
+                else
+                {
+                    AddException(ex);
+                }
+            }
+
+            return default(TOut);
+        }
     }
 }

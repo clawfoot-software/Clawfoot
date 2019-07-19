@@ -115,5 +115,15 @@ namespace Clawfoot.Core.Status
         /// <param name="userMessage">The user friendly error message</param>
         /// <returns></returns>
         IGenericStatus AddErrorIfNullOrDefault<T>(T? value, string message, string userMessage = "") where T : struct;
+
+        /// <summary>
+        /// Invokes the delegate, and if it throws an exception, records it in the current status.
+        /// If success, return the result of the delegate
+        /// </summary>
+        /// <typeparam name="TOut">The outut type</typeparam>
+        /// <param name="func">The delegate</param>
+        /// <param name="keepException">To keep the exception in the stus, or just record the error message</param>
+        /// <returns></returns>
+        TOut InvokeAndReturnResult<TOut>(Func<TOut> func, bool keepException = false);
     }
 }

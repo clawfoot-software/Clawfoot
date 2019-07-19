@@ -58,18 +58,18 @@ namespace Clawfoot.Utilities.Status
         /// <param name="func">The delegate</param>
         /// <param name="keepException">To keep the exception in the stus, or just record the error message</param>
         /// <returns></returns>
-        public static IGenericStatus<T> InvokeAndReturnStatusResult<T>(Func<T> func, bool keepException = false)
+        public static IGenericStatus<T> InvokeAndReturnStatusResult(Func<T> func, bool keepException = false)
         {
             try
             {
                 T result = func.Invoke();
-                return GenericStatus<T>.CreateAsSuccess(result);
+                return CreateAsSuccess(result);
             }
             catch (Exception ex)
             {
                 if (!keepException)
                 {
-                    return GenericStatus<T>.CreateWithError(ex.Message);
+                    return CreateWithError(ex.Message);
                 }
 
                 GenericStatus<T> status = new GenericStatus<T>();

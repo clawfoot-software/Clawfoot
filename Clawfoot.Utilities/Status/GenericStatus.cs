@@ -231,11 +231,11 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
-        public TOut InvokeAndReturnResult<TOut>(Func<TOut> func, bool keepException = false)
+        public TResult InvokeAndReturnResult<TResult>(Func<TResult> func, bool keepException = false)
         {
             try
             {
-                TOut result = func.Invoke();
+                TResult result = func.Invoke();
                 return result;
             }
             catch (Exception ex)
@@ -250,7 +250,7 @@ namespace Clawfoot.Utilities.Status
                 }
             }
 
-            return default(TOut);
+            return default(TResult);
         }
     }
 }

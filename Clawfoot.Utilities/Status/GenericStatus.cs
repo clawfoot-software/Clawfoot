@@ -42,6 +42,17 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <summary>
+        /// Helper method that creates a <see cref="GenericStatus{T}"/> with a sucess message and a result
+        /// </summary>
+        /// <param name="result">The result of this generic</param>
+        /// <param name="successMessage">The default success message</param>
+        /// <returns></returns>
+        public static IGenericStatus<TResult> CreateAsSuccess<TResult>(TResult result, string successMessage = null)
+        {
+            return new GenericStatus<TResult>(result, successMessage);
+        }
+
+        /// <summary>
         /// Helper method that creates a <see cref="GenericStatus"/> with an error message
         /// </summary>
         /// <param name="message">The error message</param>
@@ -50,6 +61,19 @@ namespace Clawfoot.Utilities.Status
         public static IGenericStatus CreateWithError(string message, string userMessage = "")
         {
             GenericStatus status = new GenericStatus();
+            status.AddError(message, userMessage);
+            return status;
+        }
+
+        /// <summary>
+        /// Helper method that creates a <see cref="GenericStatus{T}"/> with an error message
+        /// </summary>
+        /// <param name="message">The error message</param>
+        /// <param name="userMessage">The user friendly error message</param>
+        /// <returns></returns>
+        public static IGenericStatus<TResult> CreateWithError<TResult>(string message, string userMessage = "")
+        {
+            GenericStatus<TResult> status = new GenericStatus<TResult>();
             status.AddError(message, userMessage);
             return status;
         }
@@ -64,6 +88,33 @@ namespace Clawfoot.Utilities.Status
             GenericStatus status = new GenericStatus();
             status.AddException(ex);
             return status;
+        }
+
+        /// <summary>
+        /// Invokes the delegate, and if it throws an exception, records it in a new GenericStatus.
+        /// If success, return the result of the delegate as a new GenericStatus
+        /// </summary>
+        /// <param name="func">The delegate</param>
+        /// <param name="keepException">To keep the exception in the stus, or just record the error message</param>
+        /// <returns></returns>
+        public static IGenericStatus<TResult> InvokeAndReturnStatusResult<TResult>(Func<TResult> func, bool keepException = false)
+        {
+            try
+            {
+                TResult result = func.Invoke();
+                return CreateAsSuccess<TResult>(result);
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    return CreateWithError<TResult>(ex.Message);
+                }
+
+                GenericStatus<TResult> status = new GenericStatus<TResult>();
+                status.AddException(ex);
+                return status;
+            }
         }
 
         /// <inheritdoc/>

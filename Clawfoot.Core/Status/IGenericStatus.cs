@@ -38,12 +38,21 @@ namespace Clawfoot.Core.Status
         string Message { get; }
 
         /// <summary>
-        /// Will combine the error messages of the provided status with this status. 
-        /// If the provided status has a different success message, and no errors, replaces this statuses success message with the provided status
+        /// Will combine the errors and exceptions of the provided status with this status. 
+        /// If the provided status has a different success message, and no errors, replaces this statuses success message with the provided status.
+        /// Returns this status
         /// </summary>
-        /// <param name="status"></param>
+        /// <param name="status">The status to merge into this status</param>
         /// <returns>This status</returns>
         IGenericStatus MergeStatuses(IGenericStatus status);
+
+        /// <summary>
+        /// Will combine the errors and exceptions of this status into the provided status.
+        /// Returns the provided status
+        /// </summary>
+        /// <param name="status">The status to merge into</param>
+        /// <returns>The provided status</returns>
+        IGenericStatus MergeIntoStatus(IGenericStatus status);
 
         /// <summary>
         /// Combines all error messages into a single string

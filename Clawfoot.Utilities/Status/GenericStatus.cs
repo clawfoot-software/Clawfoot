@@ -176,6 +176,12 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
+        public IGenericStatus MergeIntoStatus(IGenericStatus status)
+        {
+            return status.MergeStatuses(this);
+        }
+
+        /// <inheritdoc/>
         public IGenericStatus AddException(Exception ex)
         {
             _exceptions.Add(ex);

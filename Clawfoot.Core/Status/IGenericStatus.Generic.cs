@@ -16,5 +16,14 @@ namespace Clawfoot.Core.Status
         /// </summary>
         /// <param name="result"></param>
         void SetResult(T result);
+
+        /// <summary>
+        /// Invokes the delegate, and if it throws an exception, records it in the current status and returns null.
+        /// If success, sets the status result, and returns the result of the delegate
+        /// </summary>
+        /// <param name="func"></param>
+        /// <param name="keepException"></param>
+        /// <returns></returns>
+        T InvokeAndSetResult(Func<T> func, bool keepException = false);
     }
 }

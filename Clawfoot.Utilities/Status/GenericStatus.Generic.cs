@@ -41,5 +41,29 @@ namespace Clawfoot.Utilities.Status
         {
             Result = result;
         }
+
+        /// <inheritdoc/>
+        public T InvokeAndSetResult(Func<T> func, bool keepException = false)
+        {
+            try
+            {
+                T result = func.Invoke();
+                SetResult(result);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    AddError(ex.Message);
+                }
+                else
+                {
+                    AddException(ex);
+                }
+            }
+
+            return default(T);
+        }
     }
 }

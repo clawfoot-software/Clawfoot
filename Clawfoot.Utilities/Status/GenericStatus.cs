@@ -162,6 +162,14 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
+        public IGenericStatus<T> AsGeneric<T>()
+        {
+            IGenericStatus<T> status = new GenericStatus<T>();
+            status.MergeStatuses(this);
+            return status;
+        }
+
+        /// <inheritdoc/>
         public IGenericStatus<T> SetResult<T>(T result)
         {
             IGenericStatus<T> status = new GenericStatus<T>();

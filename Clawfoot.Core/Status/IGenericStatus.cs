@@ -38,6 +38,13 @@ namespace Clawfoot.Core.Status
         string Message { get; }
 
         /// <summary>
+        /// Converts this <see cref="IGenericStatus"/> into an <see cref="IGenericStatus{T}"/>
+        /// </summary>
+        /// <typeparam name="T">The Generic Type for the returned status</typeparam>
+        /// <returns></returns>
+        IGenericStatus<T> AsGeneric<T>();
+
+        /// <summary>
         /// Creates a <see cref="IGenericStatus{T}"/>, merges this status into it, and sets the result
         /// </summary>
         /// <typeparam name="T"></typeparam>

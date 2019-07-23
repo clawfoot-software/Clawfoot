@@ -37,9 +37,10 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
-        public void SetResult(T result)
+        public IGenericStatus<T> SetResult(T result)
         {
             Result = result;
+            return this;
         }
 
         /// <inheritdoc/>

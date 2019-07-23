@@ -15,7 +15,7 @@ namespace Clawfoot.Core.Status
         /// Sets the result of the status
         /// </summary>
         /// <param name="result"></param>
-        void SetResult(T result);
+        IGenericStatus<T> SetResult(T result);
 
         /// <summary>
         /// Invokes the delegate, and if it throws an exception, records it in the current status and returns null.

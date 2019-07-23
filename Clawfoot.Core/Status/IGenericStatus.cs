@@ -38,6 +38,14 @@ namespace Clawfoot.Core.Status
         string Message { get; }
 
         /// <summary>
+        /// Creates a <see cref="IGenericStatus{T}"/>, merges this status into it, and sets the result
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// /// <param name="result"></param>
+        /// <returns></returns>
+        IGenericStatus<T> SetResult<T>(T result);
+
+        /// <summary>
         /// Will combine the errors and exceptions of the provided status with this status. 
         /// If the provided status has a different success message, and no errors, replaces this statuses success message with the provided status.
         /// Returns this status

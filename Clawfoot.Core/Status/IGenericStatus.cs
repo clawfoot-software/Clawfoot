@@ -126,6 +126,15 @@ namespace Clawfoot.Core.Status
         IGenericStatus AddErrorIfNullOrDefault<T>(T? value, string message, string userMessage = "") where T : struct;
 
         /// <summary>
+        /// Invokes the delegate, and if it throws an exception, records it in the current status.
+        /// Returns this status
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="keepException"></param>
+        /// <returns></returns>
+        IGenericStatus Invoke(Action action, bool keepException);
+
+        /// <summary>
         /// Invokes the delegate, and if it throws an exception, records it in the current status and returns null.
         /// If success, return the result of the delegate
         /// </summary>
@@ -134,5 +143,7 @@ namespace Clawfoot.Core.Status
         /// <param name="keepException">To keep the exception in the stus, or just record the error message</param>
         /// <returns></returns>
         TResult InvokeAndReturnResult<TResult>(Func<TResult> func, bool keepException = false);
+
+
     }
 }

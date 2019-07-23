@@ -237,6 +237,27 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
+        public IGenericStatus Invoke(Action action, bool keepException)
+        {
+            try
+            {
+                action.Invoke();
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    AddError(ex.Message);
+                }
+                else
+                {
+                    AddException(ex);
+                }
+            }
+
+            return this;
+        }
+        /// <inheritdoc/>
         public TResult InvokeAndReturnResult<TResult>(Func<TResult> func, bool keepException = false)
         {
             try

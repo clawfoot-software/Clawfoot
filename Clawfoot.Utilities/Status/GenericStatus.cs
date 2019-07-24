@@ -117,6 +117,20 @@ namespace Clawfoot.Utilities.Status
             }
         }
 
+        /// <summary>
+        /// Invokes the delegate, and returns a merges status based on the return or the failure of the delegate
+        /// </summary>
+        /// <param name="func"></param>
+        /// <param name="keepException"></param>
+        /// <returns></returns>
+        public static IGenericStatus InvokeAndReturnMergedStatus(Func<IGenericStatus> func, bool keepException = false)
+        {
+            IGenericStatus status = new GenericStatus();
+            status.InvokeAndMergeStatus(func, keepException);
+
+            return status;
+        }
+
         /// <inheritdoc/>
         public IEnumerable<IGenericError> Errors => _errors.AsEnumerable();
 
@@ -274,6 +288,30 @@ namespace Clawfoot.Utilities.Status
 
             return this;
         }
+
+        /// <inheritdoc/>
+        public IGenericStatus InvokeAndMergeStatus(Func<IGenericStatus> func, bool keepException = false)
+        {
+            try
+            {
+                IGenericStatus result = func.Invoke();
+                result.MergeIntoStatus(this);
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    AddError(ex.Message);
+                }
+                else
+                {
+                    AddException(ex);
+                }
+            }
+
+            return this;
+        }
+
         /// <inheritdoc/>
         public TResult InvokeAndReturnResult<TResult>(Func<TResult> func, bool keepException = false)
         {

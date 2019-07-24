@@ -150,6 +150,16 @@ namespace Clawfoot.Core.Status
         IGenericStatus Invoke(Action action, bool keepException);
 
         /// <summary>
+        /// Invokes the delegate that returns an <see cref="IGenericStatus"/>, and merges that result into this status
+        /// If an exception occures, records that exception in this status.
+        /// Returns this status
+        /// </summary>
+        /// <param name="func"></param>
+        /// <param name="keepException"></param>
+        /// <returns></returns>
+        IGenericStatus InvokeAndMergeStatus(Func<IGenericStatus> func, bool keepException = false);
+
+        /// <summary>
         /// Invokes the delegate, and if it throws an exception, records it in the current status and returns null.
         /// If success, return the result of the delegate
         /// </summary>

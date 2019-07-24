@@ -15,34 +15,55 @@ namespace Clawfoot.Utilities
     {
         readonly IReadOnlyList<FileStream> fileStreams;
         readonly IReadOnlyList<StreamWriter> fileWriters;
-
-        readonly MultiWriter multiWriter;
-        readonly TextWriter originalOutput;
+        
+        readonly MultiWriter multiWriter; // Combined multiwriter. What becomes the defualt output for Console
+        readonly TextWriter originalOutput; // Original Console output
+        readonly MultiWriter fileWriter; // File-only writers
 
         /// <summary>
         /// The original console writer that outputs to the console.
         /// </summary>
         public TextWriter ConsoleWriter => originalOutput;
 
+        /// <summary>
+        /// The TextWriter that will write only to files
+        /// </summary>
+        public TextWriter FileWriter => fileWriter;
+
         class MultiWriter : TextWriter
         {
-            IReadOnlyList<TextWriter> writers;
+            TextWriter consoleWriter; // The console-specific writer
+            IReadOnlyList<TextWriter> fileWriters; // The file specific writers         
+            bool insertTimestamps;
 
-            public MultiWriter(params TextWriter[] writers)
+            public MultiWriter(bool insertTimestamps, params StreamWriter[] fileWriters)
             {
-                if (writers.Length == 0)
+                if (fileWriters.Length == 0)
                 {
                     throw new InvalidOperationException("Must have at least one TextWriter for MultiWriter, none where provided");
                 }
 
-                this.writers = new List<TextWriter>(writers);
+                if (!fileWriters.Any(x => x.BaseStream is FileStream))
+                {
+                    throw new InvalidOperationException("MultiWriter expects all StreamWriters in the `fileWriters` parameter to be FileStreams");
+                }
+
+                this.insertTimestamps = insertTimestamps;
+                this.fileWriters = new List<TextWriter>(fileWriters);
             }
 
-            public override Encoding Encoding => writers[0].Encoding;
+            public MultiWriter(bool insertTimestamps, TextWriter consoleWriter, params StreamWriter[] fileWriters)
+                :this(insertTimestamps, fileWriters)
+            {
+                this.consoleWriter = consoleWriter;
+            }
+
+            public override Encoding Encoding => consoleWriter?.Encoding ?? fileWriters[0].Encoding;
 
             public override void Flush()
             {
-                foreach (TextWriter writer in writers)
+                consoleWriter?.Flush();
+                foreach (TextWriter writer in fileWriters)
                 {
                     writer.Flush();
                 }
@@ -50,9 +71,27 @@ namespace Clawfoot.Utilities
 
             public override void Write(char value)
             {
-                foreach (TextWriter writer in writers)
+                consoleWriter?.Write(value);
+                foreach (TextWriter writer in fileWriters)
                 {
                     writer.Write(value);
+                }
+            }
+            
+            // Overriden to attempt to insert timestamps
+            public override void WriteLine(String value)
+            {
+                if (insertTimestamps)
+                {
+                    string newValue = DateTime.Now.ToString() + ": " + value;
+                    foreach (TextWriter writer in fileWriters)
+                    {
+                        writer.WriteLine(newValue);
+                    }
+                }
+                else
+                {
+                    base.WriteLine(value);
                 }
             }
         }
@@ -61,8 +100,9 @@ namespace Clawfoot.Utilities
         /// Creates a new ConsoleMultiWriter to copy or redirect console output to file(s)
         /// </summary>
         /// <param name="writeToConsole">If you wish to continue writing output to the console</param>
+        /// <param name="timestamps">If you wish for DateTime stamps to be inserted on new file lines</param>
         /// <param name="outputPaths"></param>
-        public ConsoleMultiWriter(bool writeToConsole, params string[] outputPaths)
+        public ConsoleMultiWriter(bool writeToConsole, bool timestamps, params string[] outputPaths)
         {
             if (outputPaths.Length == 0)
             {
@@ -76,20 +116,17 @@ namespace Clawfoot.Utilities
             {
                 (fileStreams, fileWriters) = CreateFileWriters(outputPaths);
 
+                fileWriter = new MultiWriter(timestamps, fileWriters.ToArray());
+
+                // If we want to write to the console
+                // include the original TextWriter in the multiwriter
                 if (writeToConsole)
                 {
-                    //Create temporary array so originalOutput is included
-                    TextWriter[] textWriters = new TextWriter[fileWriters.Count + 1];
-                    textWriters[0] = originalOutput;
-                    for (int i = 0; i < fileWriters.Count; i++)
-                    {
-                        textWriters[i + 1] = fileWriters[i];
-                    }
-                    multiWriter = new MultiWriter(textWriters);
+                    multiWriter = new MultiWriter(timestamps, originalOutput, fileWriters.ToArray());
                 }
                 else
                 {
-                    multiWriter = new MultiWriter(fileWriters.ToArray());
+                    multiWriter = new MultiWriter(timestamps, fileWriters.ToArray());
                 }
             }
             catch (Exception e)
@@ -132,9 +169,19 @@ namespace Clawfoot.Utilities
 
             foreach (var fileStream in fileStreams)
             {
-                fileStream.Flush();
-                fileStream.Close();
+                try
+                {
+                    fileStream.Flush();
+                    fileStream.Close();
+                }
+                catch
+                {
+                    continue;
+                }
             }
+
+            fileWriter.Dispose();
+            multiWriter.Dispose();
         }
 
     }

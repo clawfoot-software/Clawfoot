@@ -83,6 +83,8 @@ namespace Clawfoot.Utilities
             {
                 if (insertTimestamps)
                 {
+                    consoleWriter?.Write(value); //Write console like normal
+
                     string newValue = DateTime.Now.ToString() + ": " + value;
                     foreach (TextWriter writer in fileWriters)
                     {
@@ -91,7 +93,7 @@ namespace Clawfoot.Utilities
                 }
                 else
                 {
-                    base.WriteLine(value);
+                    base.WriteLine(value); //Write all like normal
                 }
             }
         }

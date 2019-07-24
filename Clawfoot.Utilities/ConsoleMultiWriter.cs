@@ -110,12 +110,15 @@ namespace Clawfoot.Utilities
                 throw new ArgumentNullException("outputPaths cannot be null");
             }
 
+            // Ensure there are no duplicate paths, should this ban error instead?
+            string[] distinctOutputPaths = outputPaths.Distinct().ToArray();
+
             // Maintain easy reference to original output
             originalOutput = Console.Out;
             originalErrorOutput = Console.Error;
 
             // Writer that will write messages to normal console and outputs
-            MultiWriter multiWriter = CreateMultiWriter(replaceFiles, timestamps, outputPaths, originalOutput);
+            MultiWriter multiWriter = CreateMultiWriter(replaceFiles, timestamps, distinctOutputPaths, writeToConsole ? originalOutput : null);
             fileWriter = CreateMultiWriter(replaceFiles, timestamps, multiWriter.FileWriters); //Writes Console only to files
 
             // Writer that will write Console.Error's to error file, console, and to the normal multiWriter
@@ -194,9 +197,6 @@ namespace Clawfoot.Utilities
 
             MultiWriter fileWriter = CreateMultiWriter(replaceFiles, timestamps, writers, consoleOutput);
 
-            fileStreams.AddRange(streams);
-            fileWriterStreams.AddRange(writers);
-
             return fileWriter;
         }
 
@@ -214,9 +214,6 @@ namespace Clawfoot.Utilities
                 fileWriter = new MultiWriter(timestamps, consoleOutput, nestedWriter, writers.ToArray());
             }
 
-            fileStreams.AddRange(streams);
-            fileWriterStreams.AddRange(writers);
-
             return fileWriter;
         }
 
@@ -228,7 +225,6 @@ namespace Clawfoot.Utilities
             foreach (string outputPath in outputPaths)
             {
                 (FileStream fileStream, StreamWriter fileWriter) = CreateFileWriter(replaceFiles, outputPath);
-
                 streams.Add(fileStream);
                 writers.Add(fileWriter);
             }
@@ -238,6 +234,14 @@ namespace Clawfoot.Utilities
         private (FileStream stream, StreamWriter writer) CreateFileWriter(bool replaceFiles, string outputPath)
         {
             FileStream fileStream;
+            FileInfo outputInfo = new FileInfo(outputPath);
+
+            // If no directory exists, create it, else this will throw an error
+            if (!outputInfo.Directory.Exists)
+            {
+                outputInfo.Directory.Create();
+            }
+
             if (replaceFiles)
             {
                 fileStream = File.Open(outputPath, FileMode.Create, FileAccess.Write, FileShare.Read);
@@ -246,8 +250,13 @@ namespace Clawfoot.Utilities
             {
                 fileStream = File.Open(outputPath, FileMode.Append, FileAccess.Write, FileShare.Read);
             }
+
             var fileWriter = new StreamWriter(fileStream);
             fileWriter.AutoFlush = true;
+
+            // Keep track of the streams
+            fileStreams.Add(fileStream);
+            fileWriterStreams.Add(fileWriter);
 
             return (fileStream, fileWriter);
         }
@@ -278,7 +287,20 @@ namespace Clawfoot.Utilities
             }
 
             fileWriter?.Dispose();
+            fileErrorWriter?.Dispose();
             multiWriter?.Dispose();
+            multiErrorWriter?.Dispose();
+
+            fileWriter = null;
+            fileErrorWriter = null;
+            multiWriter = null;
+            multiErrorWriter = null;
+
+            fileWriterStreams.Clear();
+            fileStreams.Clear();
+
+            fileWriterStreams = null;
+            fileStreams = null;
         }
 
     }

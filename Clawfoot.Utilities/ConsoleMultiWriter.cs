@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clawfoot.Utilities.Internal;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,97 +15,30 @@ namespace Clawfoot.Utilities
     public class ConsoleMultiWriter : IDisposable
     {
         readonly IReadOnlyList<FileStream> fileStreams;
-        readonly IReadOnlyList<StreamWriter> fileWriters;
+        readonly IReadOnlyList<StreamWriter> fileWriterStreams;
         
-        readonly MultiWriter multiWriter; // Combined multiwriter. What becomes the defualt output for Console
+        readonly MultiWriter multiWriter; // Combined multiwriter. What becomes the default output for Console
+
         readonly TextWriter originalOutput; // Original Console output
-        readonly MultiWriter fileWriter; // File-only writers
+        readonly MultiWriter fileWriter; // File-only writers, subset of fileWriters
 
         /// <summary>
         /// The original console writer that outputs to the console.
         /// </summary>
         public TextWriter ConsoleWriter => originalOutput;
-
         /// <summary>
         /// The TextWriter that will write only to files
         /// </summary>
         public TextWriter FileWriter => fileWriter;
-
-        class MultiWriter : TextWriter
-        {
-            TextWriter consoleWriter; // The console-specific writer
-            IReadOnlyList<TextWriter> fileWriters; // The file specific writers         
-            bool insertTimestamps;
-
-            public MultiWriter(bool insertTimestamps, params StreamWriter[] fileWriters)
-            {
-                if (fileWriters.Length == 0)
-                {
-                    throw new InvalidOperationException("Must have at least one TextWriter for MultiWriter, none where provided");
-                }
-
-                if (!fileWriters.Any(x => x.BaseStream is FileStream))
-                {
-                    throw new InvalidOperationException("MultiWriter expects all StreamWriters in the `fileWriters` parameter to be FileStreams");
-                }
-
-                this.insertTimestamps = insertTimestamps;
-                this.fileWriters = new List<TextWriter>(fileWriters);
-            }
-
-            public MultiWriter(bool insertTimestamps, TextWriter consoleWriter, params StreamWriter[] fileWriters)
-                :this(insertTimestamps, fileWriters)
-            {
-                this.consoleWriter = consoleWriter;
-            }
-
-            public override Encoding Encoding => consoleWriter?.Encoding ?? fileWriters[0].Encoding;
-
-            public override void Flush()
-            {
-                consoleWriter?.Flush();
-                foreach (TextWriter writer in fileWriters)
-                {
-                    writer.Flush();
-                }
-            }
-
-            public override void Write(char value)
-            {
-                consoleWriter?.Write(value);
-                foreach (TextWriter writer in fileWriters)
-                {
-                    writer.Write(value);
-                }
-            }
-            
-            // Overriden to attempt to insert timestamps
-            public override void WriteLine(String value)
-            {
-                if (insertTimestamps)
-                {
-                    consoleWriter?.WriteLine(value); //Write console like normal
-
-                    string newValue = DateTime.Now.ToString() + ": " + value;
-                    foreach (TextWriter writer in fileWriters)
-                    {
-                        writer.WriteLine(newValue);
-                    }
-                }
-                else
-                {
-                    base.WriteLine(value); //Write all like normal
-                }
-            }
-        }
 
         /// <summary>
         /// Creates a new ConsoleMultiWriter to copy or redirect console output to file(s)
         /// </summary>
         /// <param name="writeToConsole">If you wish to continue writing output to the console</param>
         /// <param name="timestamps">If you wish for DateTime stamps to be inserted on new file lines</param>
+        /// <param name="replaceFiles">If the output files should be replaced if they exist</param>
         /// <param name="outputPaths"></param>
-        public ConsoleMultiWriter(bool writeToConsole, bool timestamps, params string[] outputPaths)
+        public ConsoleMultiWriter(bool writeToConsole, bool timestamps = false, bool replaceFiles = false, params string[] outputPaths)
         {
             if (outputPaths.Length == 0)
             {
@@ -116,19 +50,18 @@ namespace Clawfoot.Utilities
 
             try
             {
-                (fileStreams, fileWriters) = CreateFileWriters(outputPaths);
-
-                fileWriter = new MultiWriter(timestamps, fileWriters.ToArray());
+                (fileStreams, fileWriterStreams) = CreateFileWriters(replaceFiles, outputPaths);
+                fileWriter = new MultiWriter(timestamps, fileWriterStreams.ToArray());
 
                 // If we want to write to the console
                 // include the original TextWriter in the multiwriter
                 if (writeToConsole)
                 {
-                    multiWriter = new MultiWriter(timestamps, originalOutput, fileWriters.ToArray());
+                    multiWriter = new MultiWriter(timestamps, originalOutput, fileWriterStreams.ToArray());
                 }
                 else
                 {
-                    multiWriter = new MultiWriter(timestamps, fileWriters.ToArray());
+                    multiWriter = new MultiWriter(timestamps, fileWriterStreams.ToArray());
                 }
             }
             catch (Exception e)
@@ -141,14 +74,22 @@ namespace Clawfoot.Utilities
             Console.SetOut(multiWriter);
         }
 
-        private (List<FileStream> streams, List<StreamWriter> writers) CreateFileWriters(params string[] outputPaths)
+        private (List<FileStream> streams, List<StreamWriter> writers) CreateFileWriters(bool replaceFiles, params string[] outputPaths)
         {
             List<FileStream> streams = new List<FileStream>();
             List<StreamWriter> writers = new List<StreamWriter>();
 
             foreach (string outputPath in outputPaths)
             {
-                FileStream fileStream = File.Open(outputPath, FileMode.Append, FileAccess.Write, FileShare.Read);
+                FileStream fileStream;
+                if (replaceFiles)
+                {
+                    fileStream = File.Open(outputPath, FileMode.Create, FileAccess.Write, FileShare.Read);
+                }
+                else
+                {
+                    fileStream = File.Open(outputPath, FileMode.Append, FileAccess.Write, FileShare.Read);
+                }
                 var fileWriter = new StreamWriter(fileStream);
                 fileWriter.AutoFlush = true;
 
@@ -163,7 +104,7 @@ namespace Clawfoot.Utilities
         {
             Console.SetOut(originalOutput);
 
-            foreach(var fileWriter in fileWriters)
+            foreach(var fileWriter in fileWriterStreams)
             {
                 fileWriter.Flush();
                 fileWriter.Close();

@@ -53,6 +53,11 @@ namespace Clawfoot.Extensions
         {
             FileStream stream = null;
 
+            if (!file.Exists)
+            {
+                return false;
+            }
+
             try
             {
                 stream = file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None);

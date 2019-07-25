@@ -41,5 +41,36 @@ namespace Clawfoot.Extensions
         {
             return file.GetMd5Hash() == otherFile.GetMd5Hash();
         }
+
+
+        // From: https://stackoverflow.com/a/9277503
+        /// <summary>
+        /// Determines if a file is already in use
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public static bool IsInUse(this FileInfo file)
+        {
+            FileStream stream = null;
+
+            try
+            {
+                stream = file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            }
+            catch (IOException)
+            {
+                //the file is unavailable because it is:
+                //still being written to
+                //or being processed by another thread
+                //or does not exist (has already been processed)
+                return true;
+            }
+            finally
+            {
+                if (stream != null)
+                    stream.Close();
+            }
+            return false;
+        }
     }
 }

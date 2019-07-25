@@ -1,4 +1,5 @@
-﻿using Clawfoot.Utilities.Internal;
+﻿using Clawfoot.Extensions;
+using Clawfoot.Utilities.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -111,7 +112,7 @@ namespace Clawfoot.Utilities
             }
 
             // Ensure there are no duplicate paths, should this ban error instead?
-            string[] distinctOutputPaths = outputPaths.Distinct().ToArray();
+            string[] distinctOutputPaths = EnsurePathsAreUnique(outputPaths);
 
             // Maintain easy reference to original output
             originalOutput = Console.Out;
@@ -242,6 +243,11 @@ namespace Clawfoot.Utilities
                 outputInfo.Directory.Create();
             }
 
+            if (outputInfo.IsInUse())
+            {
+                throw new Exception($"Cannot open file {outputInfo.FullName}. It is currently in use by another process.");
+            }
+
             if (replaceFiles)
             {
                 fileStream = File.Open(outputPath, FileMode.Create, FileAccess.Write, FileShare.Read);
@@ -261,6 +267,22 @@ namespace Clawfoot.Utilities
             return (fileStream, fileWriter);
         }
 
+        // Necessary becasue of relative paths. Two paths can be the same, but the strings won't match.
+        private string[] EnsurePathsAreUnique(params string[] paths)
+        {
+            HashSet<string> uniquePaths = new HashSet<string>();
+
+            foreach (string path in paths)
+            {
+                FileInfo info = new FileInfo(path);
+                if (!uniquePaths.Contains(info.FullName))
+                {
+                    uniquePaths.Add(info.FullName);
+                }
+            }
+
+            return uniquePaths.ToArray();
+        }
 
         public void Dispose()
         {

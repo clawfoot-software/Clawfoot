@@ -10,6 +10,7 @@
     <Copyright>2019 Douglas Gaskell</Copyright>
     <PackageLicenseUrl>https://github.com/clawfoot-software/Clawfoot/blob/master/LICENSE.md</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/clawfoot-software/Clawfoot/tree/master/Clawfoot.Extensions</RepositoryUrl>
+    <Description>A collection of extensions to make life easier</Description>
   </PropertyGroup>
 
   <ItemGroup>

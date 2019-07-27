@@ -32,8 +32,8 @@ namespace Clawfoot.Utilities
         };
 
         /// <summary>
-        /// Registers the default <see cref="IAutoMapperConfigProvider{TMapperConfigTypes}"/> with the DI container if it does not already exist
-        /// This uses <see cref="AutomapperConfigType"/> as the Config Type
+        /// Registers the default <see cref="IAutoMapperConfigProvider"/> with the DI container if it does not already exist
+        /// This uses <see cref="AutomapperConfigType"/> as the Config Type.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -41,7 +41,26 @@ namespace Clawfoot.Utilities
         {
             bool automapperProviderRegistered = services.Any(x => x.ServiceType.GetGenericTypeDefinition() == typeof(IAutoMapperConfigProvider<>));
 
-            services.TryAddSingleton<IAutoMapperConfigProvider<AutomapperConfigType>, AutoMapperConfigProvider<AutomapperConfigType>>();
+            services.TryAddSingleton<IAutoMapperConfigProvider, AutoMapperConfigProvider>();
+            services.TryAddSingleton<IAutoMapperConfigProvider<AutomapperConfigType>>(x => x.GetRequiredService<IAutoMapperConfigProvider>());
+
+            return services;
+        }
+
+        /// <summary>
+        /// Registers the default <see cref="IAutoMapperConfigProvider"/> with the DI container if it does not already exist
+        /// This uses <see cref="AutomapperConfigType"/> as the Config Type.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="instance">The instance of the config provider</param>
+        /// <returns></returns>
+        public static IServiceCollection AddDefaultAutoMapperProvider(this IServiceCollection services, IAutoMapperConfigProvider instance)
+        {
+            bool automapperProviderRegistered = services.Any(x => x.ServiceType.GetGenericTypeDefinition() == typeof(IAutoMapperConfigProvider<>));
+
+            services.TryAddSingleton<IAutoMapperConfigProvider>(instance);
+            services.TryAddSingleton<IAutoMapperConfigProvider<AutomapperConfigType>>(x => x.GetRequiredService<IAutoMapperConfigProvider>());
+
             return services;
         }
 
@@ -51,7 +70,7 @@ namespace Clawfoot.Utilities
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddCustomAutoMapperProvider<TMapperConfigType>(this IServiceCollection services) where TMapperConfigType : System.Enum
+        public static IServiceCollection AddCustomAutoMapperProvider<TMapperConfigType>(this IServiceCollection services) where TMapperConfigType : struct, System.Enum
         {
             return services.AddSingleton<IAutoMapperConfigProvider<TMapperConfigType>, AutoMapperConfigProvider<TMapperConfigType>>();
         }

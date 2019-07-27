@@ -8,10 +8,33 @@ using System.Text;
 namespace Clawfoot.Utilities.AutoMapper
 {
     /// <summary>
+    /// Default Marker/Helper interface for <see cref="IAutoMapperConfigContainer{TMapperConfigTypes}"/>
+    /// implimenting <see cref="AutomapperConfigType"/>
+    /// </summary>
+    public interface IAutoMapperConfigProvider : IAutoMapperConfigProvider<AutomapperConfigType>
+    {
+
+    }
+
+
+    /// <summary>
     /// The AutoMapper configuration provider. This is used when multiple configurations may be needed per model
     /// </summary>
-    public interface IAutoMapperConfigProvider<TMapperConfigTypes> where TMapperConfigTypes : System.Enum
+    public interface IAutoMapperConfigProvider<TMapperConfigTypes> where TMapperConfigTypes : struct, System.Enum
     {
+        /// <summary>
+        /// The type assocaited with the default mapper. Set when ConfigureDefaultMapper is called
+        /// </summary>
+        TMapperConfigTypes DefaultConfigType { get; }
+
+        /// <summary>
+        /// Configures the static Mapper instance and adds provided config to the MapperCache as the default
+        /// </summary>
+        /// <param name="configExpression"></param>
+        /// <param name="defaultType"></param>
+        void ConfigureDefaultMapper(Action<IMapperConfigurationExpression> configExpression, TMapperConfigTypes defaultType);
+
+
         /// <summary>
         /// Configures the static Mapper instance and adds provided config to the MapperCache as the default
         /// </summary>
@@ -65,5 +88,11 @@ namespace Clawfoot.Utilities.AutoMapper
         /// <param name="type"></param>
         /// <returns></returns>
         IMapper GetMapper(TMapperConfigTypes type);
+
+        /// <summary>
+        /// Gets the default mapper that has been configured
+        /// </summary>
+        /// <returns></returns>
+        IMapper GetDefaultMapper();
     }
 }

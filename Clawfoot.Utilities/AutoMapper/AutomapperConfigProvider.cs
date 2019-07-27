@@ -7,9 +7,24 @@ using System.Text;
 
 namespace Clawfoot.Utilities.AutoMapper
 {
-    /// <inheritdoc/>
-    public class AutoMapperConfigProvider<TMapperConfigTypes> : IAutoMapperConfigProvider<TMapperConfigTypes> where TMapperConfigTypes : System.Enum
+    /// <summary>
+    /// Default Marker/Helper class for <see cref="AutoMapperConfigProvider{TMapperConfigTypes}"/>
+    /// implimenting <see cref="AutomapperConfigType"/>
+    /// </summary>
+    public class AutoMapperConfigProvider : AutoMapperConfigProvider<AutomapperConfigType>, IAutoMapperConfigProvider
     {
+
+    }
+
+    /// <inheritdoc/>
+    public class AutoMapperConfigProvider<TMapperConfigTypes> : IAutoMapperConfigProvider<TMapperConfigTypes> where TMapperConfigTypes : struct, System.Enum
+    {
+        private Dictionary<TMapperConfigTypes, AutoMapperConfigContainer<TMapperConfigTypes>> MapperCache { get; set; }
+
+        /// <inheritdoc/>
+        public TMapperConfigTypes DefaultConfigType { get; private set; }
+
+
         /// <summary>
         /// Creates a new instance of <see cref="AutoMapperConfigProvider"/>
         /// </summary>
@@ -18,14 +33,31 @@ namespace Clawfoot.Utilities.AutoMapper
             MapperCache = new Dictionary<TMapperConfigTypes, AutoMapperConfigContainer<TMapperConfigTypes>>();
         }
 
-        private Dictionary<TMapperConfigTypes, AutoMapperConfigContainer<TMapperConfigTypes>> MapperCache { get; set; }
+        /// <summary>
+        /// Creates a new instance of <see cref="AutoMapperConfigProvider"/>
+        /// </summary>
+        /// <param name="defaultConfiguration"></param>
+        /// <param name="defaultType"></param>
+        public AutoMapperConfigProvider(Action<IMapperConfigurationExpression> defaultConfiguration, TMapperConfigTypes defaultType)
+            :this()
+        {
+            ConfigureDefaultMapper(defaultConfiguration, defaultType);
+        }        
+
+        /// <inheritdoc/>
+        public void ConfigureDefaultMapper(Action<IMapperConfigurationExpression> configExpression, TMapperConfigTypes defaultType)
+        {
+            Mapper.Initialize(configExpression);
+            AddOrReplaceConfiguration(defaultType, configExpression);
+            DefaultConfigType = defaultType;
+        }
 
         /// <inheritdoc/>
         public void ConfigureDefaultMapper(MapperConfigurationExpression config, TMapperConfigTypes defaultType)
         {
             Mapper.Initialize(config);
-
             AddOrReplaceConfiguration(defaultType, config);
+            DefaultConfigType = defaultType;
         }
 
         /// <inheritdoc/>
@@ -92,6 +124,18 @@ namespace Clawfoot.Utilities.AutoMapper
             }
 
             return MapperCache[type].Mapper;
+        }
+
+        /// <inheritdoc/>
+        public IMapper GetDefaultMapper()
+        {
+            // /Double cast is necessary since the generic enum constraint can't guarantee it's an int See: https://github.com/dotnet/csharplang/issues/1993
+            if ((int)(object)default(TMapperConfigTypes) == 0)
+            {
+                throw new InvalidOperationException($"Cannot retrieve default mapper, no default has been set");
+            }
+
+            return GetMapper(DefaultConfigType);
         }
 
         private void VerifyMapperExists(TMapperConfigTypes type)

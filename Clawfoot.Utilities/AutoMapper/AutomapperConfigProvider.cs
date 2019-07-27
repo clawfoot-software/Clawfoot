@@ -13,7 +13,13 @@ namespace Clawfoot.Utilities.AutoMapper
     /// </summary>
     public class AutoMapperConfigProvider : AutoMapperConfigProvider<AutomapperConfigType>, IAutoMapperConfigProvider
     {
-
+        /// <summary>
+        /// Creates a new instance of <see cref="AutoMapperConfigProvider"/>
+        /// </summary>
+        /// <param name="defaultConfiguration"></param>
+        /// <param name="defaultType"></param>
+        public AutoMapperConfigProvider(Action<IMapperConfigurationExpression> defaultConfiguration, AutomapperConfigType defaultType)
+            : base(defaultConfiguration, defaultType) { }
     }
 
     /// <inheritdoc/>

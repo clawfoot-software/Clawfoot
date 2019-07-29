@@ -1,4 +1,5 @@
-﻿using Clawfoot.Core.Enums;
+﻿using AutoMapper;
+using Clawfoot.Core.Enums;
 using Clawfoot.Core.Interfaces;
 using Clawfoot.Utilities.AutoMapper;
 using Clawfoot.Utilities.Caches;
@@ -31,6 +32,12 @@ namespace Clawfoot.Utilities
             }
         };
 
+
+        public static bool ServiceRegistered<TService>(this IServiceCollection services)
+        {
+            return services.Any(x => x.GetType() == typeof(TService));
+        }
+
         /// <summary>
         /// Registers the default <see cref="IAutoMapperConfigProvider"/> with the DI container if it does not already exist
         /// This uses <see cref="AutomapperConfigType"/> as the Config Type.
@@ -54,16 +61,23 @@ namespace Clawfoot.Utilities
         /// <param name="services"></param>
         /// <param name="instance">The instance of the config provider</param>
         /// <returns></returns>
-        public static IServiceCollection AddDefaultAutoMapperProvider(this IServiceCollection services, IAutoMapperConfigProvider instance)
+        public static IServiceCollection AddDefaultAutoMapperProvider(this IServiceCollection services, Action<IMapperConfigurationExpression> defaultConfigExpression)
         {
-            bool automapperProviderRegistered = services.Any(x => x.ServiceType.GetGenericTypeDefinition() == typeof(IAutoMapperConfigProvider<>));
 
-            services.TryAddSingleton<IAutoMapperConfigProvider>(instance);
-            services.TryAddSingleton<IAutoMapperConfigProvider<AutomapperConfigType>>(x => x.GetRequiredService<IAutoMapperConfigProvider>());
+            if(!services.Any(x => x.GetType() == typeof(IAutoMapperConfigProvider)))
+            {
+                IAutoMapperConfigProvider provider = new AutoMapperConfigProvider(defaultConfigExpression, AutomapperConfigType.Default);
+
+                services.TryAddSingleton<IAutoMapperConfigProvider>(provider);
+                services.TryAddSingleton<IAutoMapperConfigProvider<AutomapperConfigType>>(x => x.GetRequiredService<IAutoMapperConfigProvider>());
+            }
+            else
+            {
+                throw new InvalidOperationException("The default mapper provider has already been registered, please use the ServiceRegistered() extension method to check.");
+            }
 
             return services;
         }
-
 
         /// <summary>
         /// Registers a custom <see cref="IAutoMapperConfigProvider{TMapperConfigTypes}"/> with the DI container

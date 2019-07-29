@@ -34,7 +34,6 @@ namespace Clawfoot.Utilities.AutoMapper
         /// <param name="defaultType"></param>
         void ConfigureDefaultMapper(Action<IMapperConfigurationExpression> configExpression, TMapperConfigTypes defaultType);
 
-
         /// <summary>
         /// Configures the static Mapper instance and adds provided config to the MapperCache as the default
         /// </summary>

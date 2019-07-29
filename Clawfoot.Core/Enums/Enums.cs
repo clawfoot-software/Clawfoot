@@ -42,4 +42,14 @@ namespace Clawfoot.Core.Enums
         ForeignKeyPropertyCache = 2,
         CrudService = 3
     }
+
+    /// <summary>
+    /// The relative Left or Right hand side
+    /// </summary>
+    public enum RelativeHandedSide
+    {
+        Undefined = 0,
+        Left = 1,
+        Right = 2
+    }
 }

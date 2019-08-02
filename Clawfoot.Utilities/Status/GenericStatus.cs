@@ -108,7 +108,7 @@ namespace Clawfoot.Utilities.Status
             {
                 if (!keepException)
                 {
-                    return CreateWithError<TResult>(ex.Message);
+                    return GenericStatus.CreateWithError<TResult>(ex.Message);
                 }
 
                 GenericStatus<TResult> status = new GenericStatus<TResult>();
@@ -166,7 +166,7 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
-        public string ToUserFriendyString(string seperator = "\n")
+        public string ToUserFriendlyString(string seperator = "\n")
         {
             if (_errors.Count > 0)
             {
@@ -294,8 +294,8 @@ namespace Clawfoot.Utilities.Status
         {
             try
             {
-                IGenericStatus result = func.Invoke();
-                result.MergeIntoStatus(this);
+                IGenericStatus resultStatus = func.Invoke();
+                resultStatus.MergeIntoStatus(this);
             }
             catch (Exception ex)
             {
@@ -310,6 +310,30 @@ namespace Clawfoot.Utilities.Status
             }
 
             return this;
+        }
+
+        /// <inheritdoc/>
+        public TResult InvokeMergeStatusAndReturnResult<TResult>(Func<IGenericStatus<TResult>> func, bool keepException = false)
+        {
+            try
+            {
+                IGenericStatus<TResult> resultStatus = func.Invoke();
+                resultStatus.MergeIntoStatus(this); //Merge errors into this
+                return resultStatus.Result;
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    AddError(ex.Message);
+                }
+                else
+                {
+                    AddException(ex);
+                }
+            }
+
+            return default(TResult);
         }
 
         /// <inheritdoc/>

@@ -81,7 +81,7 @@ namespace Clawfoot.Core.Status
         /// </summary>
         /// <param name="seperator"></param>
         /// <returns></returns>
-        string ToUserFriendyString(string seperator = "\n");
+        string ToUserFriendlyString(string seperator = "\n");
 
         /// <summary>
         /// Adds the provided exception to the status.
@@ -112,7 +112,7 @@ namespace Clawfoot.Core.Status
         /// <summary>
         /// Adds a new error to the status if the item is null
         /// </summary>
-        /// <remarks>This only accepts structs that impliment <see cref="Nullable{T}"/></remarks>
+        /// <remarks>This only accepts structs that implement <see cref="Nullable{T}"/></remarks>
         /// <param name="value">>The nullable value that is checked</param>
         /// <param name="message">The error message</param>
         /// <param name="userMessage">The user friendly error message</param>
@@ -133,7 +133,7 @@ namespace Clawfoot.Core.Status
         /// <summary>
         /// Adds a new error to the status if the item is null or is default(T)
         /// </summary>
-        /// <remarks>This only accepts structs that impliment <see cref="Nullable{T}"/></remarks>
+        /// <remarks>This only accepts structs that implement <see cref="Nullable{T}"/></remarks>
         /// <param name="value">>The nullable value that is checked</param>
         /// <param name="message">The error message</param>
         /// <param name="userMessage">The user friendly error message</param>
@@ -150,8 +150,8 @@ namespace Clawfoot.Core.Status
         IGenericStatus Invoke(Action action, bool keepException);
 
         /// <summary>
-        /// Invokes the delegate that returns an <see cref="IGenericStatus"/>, and merges that result into this status
-        /// If an exception occures, records that exception in this status.
+        /// Invokes the delegate that returns an <see cref="IGenericStatus"/>, and merges that result status into this status
+        /// If an exception occurs, records that exception in this status.
         /// Returns this status
         /// </summary>
         /// <param name="func"></param>
@@ -160,12 +160,22 @@ namespace Clawfoot.Core.Status
         IGenericStatus InvokeAndMergeStatus(Func<IGenericStatus> func, bool keepException = false);
 
         /// <summary>
-        /// Invokes the delegate, and if it throws an exception, records it in the current status and returns null.
+        /// Invokes the delegate that returns an <see cref="IGenericStatus{T}"/>, merges that result status into this status, and returns the TResult result
+        /// If an exception occurs, records that exception in this status and returns default(TResult).
+        /// Returns this status
+        /// </summary>
+        /// <param name="func"></param>
+        /// <param name="keepException"></param>
+        /// <returns></returns>
+        TResult InvokeMergeStatusAndReturnResult<TResult>(Func<IGenericStatus<TResult>> func, bool keepException = false);
+
+        /// <summary>
+        /// Invokes the delegate, and if it throws an exception, records it in the current status and returns default(TResult).
         /// If success, return the result of the delegate
         /// </summary>
-        /// <typeparam name="TResult">The outut type</typeparam>
+        /// <typeparam name="TResult">The output type</typeparam>
         /// <param name="func">The delegate</param>
-        /// <param name="keepException">To keep the exception in the stus, or just record the error message</param>
+        /// <param name="keepException">To keep the exception in the status, or just record the error message</param>
         /// <returns></returns>
         TResult InvokeAndReturnResult<TResult>(Func<TResult> func, bool keepException = false);
 

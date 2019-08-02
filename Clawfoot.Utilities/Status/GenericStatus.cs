@@ -10,9 +10,9 @@ namespace Clawfoot.Utilities.Status
     public class GenericStatus : IGenericStatus
     {
         internal const string DefaultSuccessMessage = "Success";
-        private readonly List<IGenericError> _errors = new List<IGenericError>();
-        private readonly List<Exception> _exceptions = new List<Exception>();
-        private string _successMessage = DefaultSuccessMessage;
+        private protected readonly List<IGenericError> _errors = new List<IGenericError>();
+        private protected readonly List<Exception> _exceptions = new List<Exception>();
+        private protected string _successMessage = DefaultSuccessMessage;
 
         /// <summary>
         /// Create a generic status

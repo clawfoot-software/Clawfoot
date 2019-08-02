@@ -35,12 +35,51 @@ namespace Clawfoot.Utilities.Status
             get => HasErrors ? default(T) : _result;
             set => _result = value;
         }
+        
+        /// <inheritdoc/>
+        public bool HasResult
+        {
+            get
+            {
+                if (HasErrors) return false;
+                if(EqualityComparer<T>.Default.Equals(_result, default(T))) return false;
+
+                return true;
+            }
+        }
 
         /// <inheritdoc/>
         public IGenericStatus<T> SetResult(T result)
         {
             Result = result;
             return this;
+        }
+
+        /// <inheritdoc/>
+        public IGenericStatus<T> MergeStatuses(IGenericStatus<T> status)
+        {
+            _errors.AddRange(status.Errors);
+            _exceptions.AddRange(status.Exceptions);
+
+            if (!this.HasErrors)
+            {
+                _successMessage = status.Message;
+            }
+
+            // If this doesn't have a result, and status does, keep the provided result
+            // THis also implicitly means that an existing result on this status is maintained either way
+            if(!this.HasResult && status.HasResult)
+            {
+                this.SetResult(status.Result);
+            }
+            
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IGenericStatus<T> MergeIntoStatus(IGenericStatus<T> status)
+        {
+            return status.MergeStatuses(this);
         }
 
         /// <inheritdoc/>

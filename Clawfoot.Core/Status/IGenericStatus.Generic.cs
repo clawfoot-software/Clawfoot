@@ -36,12 +36,20 @@ namespace Clawfoot.Core.Status
 
 
         /// <summary>
-        /// Will combine the errors and exceptions of this status into the provided status using <see cref="MergeStatuses(IGenericStatus{T})"/>.
+        /// Will combine the errors, exceptions, and result of this status into the provided status using <see cref="MergeStatuses(IGenericStatus{T})"/>.
         /// Returns the provided status
         /// </summary>
         /// <param name="status">The status to merge into</param>
         /// <returns>The provided status</returns>
         IGenericStatus<T> MergeIntoStatus(IGenericStatus<T> status);
+
+        /// <summary>
+        /// Will combine the errors and exceptions of this status into the provided status using <see cref="IGenericStatus.MergeStatuses(IGenericStatus)"/>.
+        /// Returns the result of this status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        T MergeIntoStatusWithResult(IGenericStatus status);
 
         /// <summary>
         /// Invokes the delegate, and if it throws an exception, records it in the current status and returns null.

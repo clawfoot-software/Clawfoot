@@ -83,6 +83,13 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
+        public T MergeIntoStatusWithResult(IGenericStatus status)
+        {
+            status.MergeStatuses(this);
+            return this.Result;
+        }
+
+        /// <inheritdoc/>
         public T InvokeAndSetResult(Func<T> func, bool keepException = false)
         {
             try

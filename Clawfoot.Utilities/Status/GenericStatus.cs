@@ -155,6 +155,21 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <summary>
+        /// Helper method that invokes the delegate, and if it throws an exception, records it in a returned status
+        /// Returns a new status
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="keepException"></param>
+        /// <returns></returns>
+        public static IGenericStatus InvokeAndReturnStatus(Action action, bool keepException)
+        {
+            IGenericStatus status = new GenericStatus();
+
+            return status.Invoke(action, keepException);
+
+        }
+
+        /// <summary>
         /// Invokes the delegate, and if it throws an exception, records it in a new GenericStatus.
         /// If success, return the result of the delegate as a new GenericStatus
         /// </summary>

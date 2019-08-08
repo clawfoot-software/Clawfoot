@@ -36,6 +36,66 @@ namespace Clawfoot.Utilities.Status
         /// </summary>
         /// <param name="successMessage">The default success message</param>
         /// <returns></returns>
+        public static IGenericStatus AsSuccess(string successMessage = null)
+        {
+            return new GenericStatus(successMessage);
+        }
+
+        /// <summary>
+        /// Helper method that creates a <see cref="GenericStatus{T}"/> with a sucess message and a result
+        /// </summary>
+        /// <param name="result">The result of this generic</param>
+        /// <param name="successMessage">The default success message</param>
+        /// <returns></returns>
+        public static IGenericStatus<TResult> AsSuccess<TResult>(TResult result, string successMessage = null)
+        {
+            return new GenericStatus<TResult>(result, successMessage);
+        }
+
+        /// <summary>
+        /// Helper method that creates a <see cref="GenericStatus"/> with an error message
+        /// </summary>
+        /// <param name="message">The error message</param>
+        /// <param name="userMessage">The user friendly error message</param>
+        /// <returns></returns>
+        public static IGenericStatus AsError(string message, string userMessage = "")
+        {
+            GenericStatus status = new GenericStatus();
+            status.AddError(message, userMessage);
+            return status;
+        }
+
+        /// <summary>
+        /// Helper method that creates a <see cref="GenericStatus{T}"/> with an error message
+        /// </summary>
+        /// <param name="message">The error message</param>
+        /// <param name="userMessage">The user friendly error message</param>
+        /// <returns></returns>
+        public static IGenericStatus<TResult> AsError<TResult>(string message, string userMessage = "")
+        {
+            GenericStatus<TResult> status = new GenericStatus<TResult>();
+            status.AddError(message, userMessage);
+            return status;
+        }
+
+        /// <summary>
+        /// Helper method that creates a <see cref="GenericStatus"/> with the provided exception
+        /// </summary>
+        /// <param name="ex">The exception</param>
+        /// <returns></returns>
+        public static IGenericStatus AsErrorWithException(Exception ex)
+        {
+            GenericStatus status = new GenericStatus();
+            status.AddException(ex);
+            return status;
+        }
+
+        /// <summary>
+        /// Helper method that creates a <see cref="GenericStatus"/> with no errors
+        /// </summary>
+        /// <param name="successMessage">The default success message</param>
+        /// <returns></returns>
+        [Obsolete("Use AsSuccess instead")]
         public static IGenericStatus CreateAsSuccess(string successMessage = null)
         {
             return new GenericStatus(successMessage);
@@ -47,6 +107,7 @@ namespace Clawfoot.Utilities.Status
         /// <param name="result">The result of this generic</param>
         /// <param name="successMessage">The default success message</param>
         /// <returns></returns>
+        [Obsolete("Use AsSuccess instead")]
         public static IGenericStatus<TResult> CreateAsSuccess<TResult>(TResult result, string successMessage = null)
         {
             return new GenericStatus<TResult>(result, successMessage);
@@ -58,6 +119,7 @@ namespace Clawfoot.Utilities.Status
         /// <param name="message">The error message</param>
         /// <param name="userMessage">The user friendly error message</param>
         /// <returns></returns>
+        [Obsolete("Use AsError instead")]
         public static IGenericStatus CreateWithError(string message, string userMessage = "")
         {
             GenericStatus status = new GenericStatus();
@@ -71,6 +133,7 @@ namespace Clawfoot.Utilities.Status
         /// <param name="message">The error message</param>
         /// <param name="userMessage">The user friendly error message</param>
         /// <returns></returns>
+        [Obsolete("Use AsError instead")]
         public static IGenericStatus<TResult> CreateWithError<TResult>(string message, string userMessage = "")
         {
             GenericStatus<TResult> status = new GenericStatus<TResult>();
@@ -83,6 +146,7 @@ namespace Clawfoot.Utilities.Status
         /// </summary>
         /// <param name="ex">The exception</param>
         /// <returns></returns>
+        [Obsolete("Use AsErrorWithException instead")]
         public static IGenericStatus CreateWithException(Exception ex)
         {
             GenericStatus status = new GenericStatus();
@@ -102,13 +166,13 @@ namespace Clawfoot.Utilities.Status
             try
             {
                 TResult result = func.Invoke();
-                return CreateAsSuccess<TResult>(result);
+                return AsSuccess<TResult>(result);
             }
             catch (Exception ex)
             {
                 if (!keepException)
                 {
-                    return GenericStatus.CreateWithError<TResult>(ex.Message);
+                    return GenericStatus.AsError<TResult>(ex.Message);
                 }
 
                 GenericStatus<TResult> status = new GenericStatus<TResult>();

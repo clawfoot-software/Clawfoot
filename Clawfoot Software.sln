@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29201.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clawfoot.Builders", "Clawfoot.Builders\Clawfoot.Builders.csproj", "{5FD74CED-9F37-49F1-A636-2F8DD7E354F4}"
 EndProject
@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clawfoot.Utilities", "Clawf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clawfoot.Extensions", "Clawfoot.Extensions\Clawfoot.Extensions.csproj", "{0EB1C4E1-D8CA-4249-8F3F-42650CE525E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clawfoot.CrudService", "Clawfoot.CrudService\Clawfoot.CrudService.csproj", "{ED43B647-D0AA-4804-84F5-24AEF3A45DB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clawfoot.CrudService", "Clawfoot.CrudService\Clawfoot.CrudService.csproj", "{ED43B647-D0AA-4804-84F5-24AEF3A45DB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clawfoot.TestUtilities", "Clawfoot.TestUtilities\Clawfoot.TestUtilities.csproj", "{02419211-12E1-4CF8-A725-2FC04D71FDBF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{ED43B647-D0AA-4804-84F5-24AEF3A45DB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED43B647-D0AA-4804-84F5-24AEF3A45DB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED43B647-D0AA-4804-84F5-24AEF3A45DB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02419211-12E1-4CF8-A725-2FC04D71FDBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02419211-12E1-4CF8-A725-2FC04D71FDBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02419211-12E1-4CF8-A725-2FC04D71FDBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02419211-12E1-4CF8-A725-2FC04D71FDBF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

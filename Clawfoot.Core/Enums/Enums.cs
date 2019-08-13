@@ -13,12 +13,12 @@ namespace Clawfoot.Core.Enums
         /// <summary>
         /// The defualt configuration type for the model
         /// </summary>
-        Default,
+        Default = 1,
 
         /// <summary>
         /// A config type that will not expand entity relations when mapping
         /// </summary>
-        NoExpandedRelations
+        NoExpandedRelations = 2
     }
 
     /// <summary>

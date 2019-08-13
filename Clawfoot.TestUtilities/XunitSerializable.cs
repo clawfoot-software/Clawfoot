@@ -51,7 +51,7 @@ namespace Clawfoot.TestUtilities
                 }
                 else
                 {
-                    throw new NotSupportedException($"Property Type {propType.Name} is not supported.");
+                    //throw new NotSupportedException($"Property Type {propType.Name} is not supported.");
                 }
             }
         }

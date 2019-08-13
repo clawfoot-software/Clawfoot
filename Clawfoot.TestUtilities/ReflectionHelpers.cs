@@ -75,6 +75,7 @@ namespace Clawfoot.TestUtilities
                 .GetTypes()
                 .Where(x => x.IsClass || x.IsValueType)
                 .Where(x => x.Namespace == namespaceName)
+                .Where(x => !x.IsNested)
                 .ToDictionary(x => x.Name);
 
         }
@@ -88,6 +89,7 @@ namespace Clawfoot.TestUtilities
                 .Where(x => x.IsClass || x.IsValueType)
                 .Where(x => x.Namespace.Contains(namespaceName))
                 .Where(x => x.Namespace != namespaceName)
+                .Where(x => !x.IsNested)
                 .ToDictionary(x => x.Name);
 
         }

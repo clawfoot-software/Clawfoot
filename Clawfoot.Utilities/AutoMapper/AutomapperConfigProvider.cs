@@ -138,7 +138,7 @@ namespace Clawfoot.Utilities.AutoMapper
         public IMapper GetDefaultMapper()
         {
             // /Double cast is necessary since the generic enum constraint can't guarantee it's an int See: https://github.com/dotnet/csharplang/issues/1993
-            if ((int)(object)default(TMapperConfigTypes) == 0)
+            if ((int)(object)DefaultConfigType == (int)(object)default(TMapperConfigTypes))
             {
                 throw new InvalidOperationException($"Cannot retrieve default mapper, no default has been set");
             }

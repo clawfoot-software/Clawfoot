@@ -16,22 +16,19 @@ namespace Clawfoot.TestUtilities
 
         public EntityAndItemHashSetModel(string entityName, HashSet<T> items)
         {
-            EntityName = entityName;
-            Items = items;
-        }
-
-        public EntityAndItemHashSetModel(string entityName, IEnumerable<T> items)
-            :this(entityName, new HashSet<T>(items)) { }
+            EntityName = entityName ?? throw new ArgumentNullException(nameof(entityName), "entityName cannot be null");
+            Items = items ?? throw new ArgumentNullException(nameof(items),"Items hashset cannot be null");          
+        } 
 
         /// <summary>
         /// The name of type representing the entity
         /// </summary>
-        public string EntityName { get; private set; }
+        public string EntityName { get; set; }
 
         /// <summary>
         /// The items related to the entity
         /// </summary>
-        public HashSet<T> Items { get; private set; }
+        public HashSet<T> Items { get; set; }
 
         public override string ToString()
         {

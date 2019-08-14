@@ -52,6 +52,14 @@ namespace Clawfoot.Core.Status
         T MergeIntoStatusWithResult(IGenericStatus status);
 
         /// <summary>
+        /// Converts this generic status to one with the provided result type
+        /// Used by the MapTo exxtension method
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="result"></param>
+        IGenericStatus<TResult> ConvertTo<TResult>(TResult result);
+
+        /// <summary>
         /// Invokes the delegate, and if it throws an exception, records it in the current status and returns null.
         /// If success, sets the status result, and returns the result of the delegate
         /// </summary>

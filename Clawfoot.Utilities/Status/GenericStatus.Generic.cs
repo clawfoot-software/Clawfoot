@@ -90,6 +90,17 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
+        public IGenericStatus<TResult> ConvertTo<TResult>(TResult result)
+        {
+            IGenericStatus<TResult> status = new GenericStatus<TResult>();
+            status.SetResult(result);
+
+            status.MergeStatuses(this);
+            return status;
+
+        }
+
+        /// <inheritdoc/>
         public T InvokeAndSetResult(Func<T> func, bool keepException = false)
         {
             try

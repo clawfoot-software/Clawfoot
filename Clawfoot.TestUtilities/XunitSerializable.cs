@@ -17,11 +17,15 @@ namespace Clawfoot.TestUtilities
             foreach (PropertyInfo prop in props)
             {
                 Type propType = prop.PropertyType;
-                if (propType.IsPrimitive)
+                if (propType.IsPrimitive || propType.IsEquivalentTo(typeof(string)))
                 {
                     prop.SetValue(this, info.GetValue(prop.Name, propType));
                 }
-                else if (propType.IsAssignableFrom(typeof(IEnumerable<string>)))
+                else if (propType.IsValueType && propType.IsSerializable)
+                {
+                    prop.SetValue(this, info.GetValue(prop.Name, propType));
+                }
+                else if (typeof(IEnumerable<string>).IsAssignableFrom(propType))
                 {
                     prop.SetValue(this, new HashSet<string>(info.GetValue<string[]>(prop.Name)));
                 }
@@ -41,6 +45,10 @@ namespace Clawfoot.TestUtilities
             {
                 Type propType = prop.PropertyType;
                 if (propType.IsPrimitive || propType.IsEquivalentTo(typeof(string)))
+                {
+                    info.AddValue(prop.Name, prop.GetValue(this));
+                }
+                else if (propType.IsValueType && propType.IsSerializable)
                 {
                     info.AddValue(prop.Name, prop.GetValue(this));
                 }

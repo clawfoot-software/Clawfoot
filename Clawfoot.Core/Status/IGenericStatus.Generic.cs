@@ -49,7 +49,15 @@ namespace Clawfoot.Core.Status
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        T MergeIntoStatusWithResult(IGenericStatus status);
+        T MergeIntoStatusAndReturnResult(IGenericStatus status);
+
+        /// <summary>
+        /// Will combine the errors, exceptions, and result of this status into the provided status using <see cref="MergeStatuses(IGenericStatus{T})"/>.
+        /// Returns the result of this status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        T MergeIntoStatusAndReturnResult(IGenericStatus<T> status);
 
         /// <summary>
         /// Converts this generic status to one with the provided result type

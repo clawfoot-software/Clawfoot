@@ -83,7 +83,14 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
-        public T MergeIntoStatusWithResult(IGenericStatus status)
+        public T MergeIntoStatusAndReturnResult(IGenericStatus status)
+        {
+            status.MergeStatuses(this);
+            return this.Result;
+        }
+
+        /// <inheritdoc/>
+        public T MergeIntoStatusAndReturnResult(IGenericStatus<T> status)
         {
             status.MergeStatuses(this);
             return this.Result;

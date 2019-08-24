@@ -6,45 +6,35 @@ using System.Text;
 
 namespace Clawfoot.TestUtilities
 {
-    public class Test
-    {
-        public Test()
-        {
-            thing();
-        }
-
-        public string Name { get; set; }
-        public void thing()
-        {
-            Test testvar = new TestModelBuilder<Test>().WithValue(x => x.Name, "stuff").Build();
-        }
-    }
-
-
-    public class TestModelBuilder<T>
+    public class TestModelBuilder<TModel> where TModel : class
     {
         private List<Action> actions = new List<Action>();
-        private T instance;
+        private TModel instance;
 
         public TestModelBuilder()
         {
             instance = CreateInstance();
         }
 
-        public TestModelBuilder(T instance)
+        public TestModelBuilder(TModel instance)
         {
+            if(instance is null) throw new ArgumentNullException(nameof(instance), "Cannot create a TestModelBuilder with a null instance through this constructor");
             this.instance = instance;
         }
 
         //---------------------------------------------------------
         //===== Public Methods =====
 
-        public T CreateInstance()
+        /// <summary>
+        /// Creates a new, empty, instance of TModel
+        /// </summary>
+        /// <returns></returns>
+        public TModel CreateInstance()
         {
-            return (T)Activator.CreateInstance(typeof(T), true);
+            return (TModel)Activator.CreateInstance(typeof(TModel), true);
         }
 
-        public TestModelBuilder<T> WithValue<TMember>(Expression<Func<T, TMember>> memberExpression, TMember value, MemberTypes memberType = MemberTypes.Property)
+        public TestModelBuilder<TModel> WithValue<TMember>(Expression<Func<TModel, TMember>> memberExpression, TMember value, MemberTypes memberType = MemberTypes.Property)
         {
             string memberName = ((MemberExpression)memberExpression.Body).Member.Name;
             actions.Add(() => SetValue(memberName, value, memberType));
@@ -52,13 +42,17 @@ namespace Clawfoot.TestUtilities
 
         }
 
-        public TestModelBuilder<T> WithValue(string memberName, object value, MemberTypes memberType = MemberTypes.Property)
+        public TestModelBuilder<TModel> WithValue(string memberName, object value, MemberTypes memberType = MemberTypes.Property)
         {
             actions.Add(() => SetValue(memberName, value, memberType));
             return this;
         }
 
-        public T Build()
+        /// <summary>
+        /// Builds the model
+        /// </summary>
+        /// <returns></returns>
+        public TModel Build()
         {
             foreach (Action action in actions)
             {
@@ -86,13 +80,13 @@ namespace Clawfoot.TestUtilities
 
         private void SetPropertyValue(string name, object value)
         {
-            Type type = typeof(T);
+            Type type = typeof(TModel);
             GetProperty(type, name).SetValue(instance, value);
         }
 
         private void SetFieldValue(string name, object value)
         {
-            Type type = typeof(T);
+            Type type = typeof(TModel);
             GetField(type, name).SetValue(instance, value);
         }
 

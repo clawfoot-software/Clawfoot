@@ -1,10 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
 namespace Clawfoot.TestUtilities
 {
+    public class Test
+    {
+        public Test()
+        {
+            thing();
+        }
+
+        public string Name { get; set; }
+        public void thing()
+        {
+            Test testvar = new TestModelBuilder<Test>().WithValue(x => x.Name, "stuff").Build();
+        }
+    }
+
+
     public class TestModelBuilder<T>
     {
         private List<Action> actions = new List<Action>();
@@ -23,10 +39,17 @@ namespace Clawfoot.TestUtilities
         //---------------------------------------------------------
         //===== Public Methods =====
 
-
         public T CreateInstance()
         {
             return (T)Activator.CreateInstance(typeof(T), true);
+        }
+
+        public TestModelBuilder<T> WithValue<TMember>(Expression<Func<T, TMember>> memberExpression, TMember value, MemberTypes memberType = MemberTypes.Property)
+        {
+            string memberName = ((MemberExpression)memberExpression.Body).Member.Name;
+            actions.Add(() => SetValue(memberName, value, memberType));
+            return this;
+
         }
 
         public TestModelBuilder<T> WithValue(string memberName, object value, MemberTypes memberType = MemberTypes.Property)

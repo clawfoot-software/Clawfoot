@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clawfoot.Core;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,7 +10,7 @@ namespace Clawfoot.Extensions
         //https://stackoverflow.com/a/56116478
         /// <summary>
         /// Gets the name of the method of type T
-        /// Usaed like myInstance.GetMemberName(x => nameof(x.MyMember))
+        /// Used like myInstance.GetMemberName(x => nameof(x.MyMember))
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="instance"></param>
@@ -19,5 +20,10 @@ namespace Clawfoot.Extensions
         {
             return nameofMethod(instance);
         }
+
+        public static KeyValuePair<TKey1, TValue> Parse<TKey1, TKey2, TValue>(this KeyValuePair<KeyPair<TKey1, TKey2>, TValue> instance)
+        {
+            return new KeyValuePair<TKey1, TValue>(instance.Key.Key1, instance.Value);
+        } 
     }
 }

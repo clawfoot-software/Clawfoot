@@ -161,11 +161,27 @@ namespace Clawfoot.Utilities.Status
         /// <param name="action"></param>
         /// <param name="keepException"></param>
         /// <returns></returns>
-        public static IGenericStatus InvokeAndReturnStatus(Action action, bool keepException)
+        public static IGenericStatus InvokeAndReturnStatus(Action action, bool keepException = false)
         {
             IGenericStatus status = new GenericStatus();
 
             return status.Invoke(action, keepException);
+
+        }
+
+        /// <summary>
+        /// Helper method that invokes the delegate, and if it throws an exception, records it in a returned status
+        /// Returns a new status
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="keepException"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static IGenericStatus InvokeAndReturnStatus<TParam>(Action<TParam> action, TParam obj, bool keepException = false)
+        {
+            IGenericStatus status = new GenericStatus();
+
+            return status.Invoke(action, obj, keepException);
 
         }
 
@@ -347,11 +363,33 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
-        public IGenericStatus Invoke(Action action, bool keepException)
+        public IGenericStatus Invoke(Action action, bool keepException = false)
         {
             try
             {
                 action.Invoke();
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    AddError(ex.Message);
+                }
+                else
+                {
+                    AddException(ex);
+                }
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IGenericStatus Invoke<TParam>(Action<TParam> action, TParam obj, bool keepException = false)
+        {
+            try
+            {
+                action.Invoke(obj);
             }
             catch (Exception ex)
             {

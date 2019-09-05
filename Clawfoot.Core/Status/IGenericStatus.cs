@@ -147,7 +147,16 @@ namespace Clawfoot.Core.Status
         /// <param name="action"></param>
         /// <param name="keepException"></param>
         /// <returns></returns>
-        IGenericStatus Invoke(Action action, bool keepException);
+        IGenericStatus Invoke(Action action, bool keepException = false);
+
+        /// <summary>
+        /// Invokes the delegate, and if it throws an exception, records it in the current status.
+        /// Returns this status
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="keepException"></param>
+        /// <returns></returns>
+        IGenericStatus Invoke<TParam>(Action<TParam> action, TParam obj, bool keepException = false);
 
         /// <summary>
         /// Invokes the delegate that returns an <see cref="IGenericStatus"/>, and merges that result status into this status

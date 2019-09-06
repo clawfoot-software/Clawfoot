@@ -7,8 +7,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>2019 Douglas Gaskell</Copyright>
     <RepositoryUrl>https://github.com/clawfoot-software/Clawfoot/tree/master/Clawfoot.Core</RepositoryUrl>
-    <Version>1.6.0</Version>
-    <AssemblyVersion>1.6.0.0</AssemblyVersion>
+    <Version>0.5.0</Version>
+    <AssemblyVersion>0.5.0.0</AssemblyVersion>
     <LangVersion>7.3</LangVersion>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

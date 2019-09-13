@@ -41,6 +41,38 @@ namespace Clawfoot.Core.Status
         /// <returns>This status</returns>
         new IGenericStatus<T> AddErrorIfNull<TValue>(TValue value, string message, string userMessage = "") where TValue : class;
 
+
+        /// <summary>
+        /// Adds a new error to the status if the item is null
+        /// </summary>
+        /// <remarks>This only accepts structs that implement <see cref="Nullable{TValue}"/></remarks>
+        /// <param name="value">>The nullable value that is checked</param>
+        /// <param name="message">The error message</param>
+        /// <param name="userMessage">The user friendly error message</param>
+        /// <returns>This status</returns>
+        new IGenericStatus<T> AddErrorIfNull<TValue>(TValue? value, string message, string userMessage = "") where TValue : struct;
+
+        /// <summary>
+        /// Adds a new error to the status if the item is null or is default(T)
+        /// </summary>
+        /// <remarks>This only accepts reference types</remarks>
+        /// <param name="value">>The value that is checked</param>
+        /// <param name="message">The error message</param>
+        /// <param name="userMessage">The user friendly error message</param>
+        /// <returns>This status</returns>
+        new IGenericStatus<T> AddErrorIfNullOrDefault<TValue>(TValue value, string message, string userMessage = "") where TValue : class;
+
+
+        /// <summary>
+        /// Adds a new error to the status if the item is null or is default(T)
+        /// </summary>
+        /// <remarks>This only accepts structs that implement <see cref="Nullable{TValue}"/></remarks>
+        /// <param name="value">>The nullable value that is checked</param>
+        /// <param name="message">The error message</param>
+        /// <param name="userMessage">The user friendly error message</param>
+        /// <returns>This status</returns>
+        new IGenericStatus<T> AddErrorIfNullOrDefault<TValue>(TValue? value, string message, string userMessage = "") where TValue : struct;
+
         /// <summary>
         /// Will combine the result, errors, and exceptions of the provided status with this status. 
         /// If the provided status has a different success message, and no errors, replaces this statuses success message with the provided status.

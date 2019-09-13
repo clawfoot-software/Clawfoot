@@ -56,6 +56,41 @@ namespace Clawfoot.Utilities.Status
         }
 
         /// <inheritdoc/>
+        public new IGenericStatus<T> AddError(string message, string userMessage = "")
+        {
+            base.AddError(message, userMessage);
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public new IGenericStatus<T> AddErrorIfNull<TValue>(TValue value, string message, string userMessage = "") where TValue : class
+        {
+            base.AddErrorIfNull<TValue>(value, message, userMessage);
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public new IGenericStatus<T> AddErrorIfNull<TValue>(TValue? value, string message, string userMessage = "") where TValue : struct
+        {
+            base.AddErrorIfNull<TValue>(value, message, userMessage);
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public new IGenericStatus<T> AddErrorIfNullOrDefault<TValue>(TValue value, string message, string userMessage = "") where TValue : class
+        {
+            base.AddErrorIfNullOrDefault<TValue>(value, message, userMessage);
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public new IGenericStatus<T> AddErrorIfNullOrDefault<TValue>(TValue? value, string message, string userMessage = "") where TValue : struct
+        {
+            base.AddErrorIfNullOrDefault<TValue>(value, message, userMessage);
+            return this;
+        }
+
+        /// <inheritdoc/>
         public IGenericStatus<T> MergeStatuses(IGenericStatus<T> status)
         {
             _errors.AddRange(status.Errors);

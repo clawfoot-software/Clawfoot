@@ -24,6 +24,24 @@ namespace Clawfoot.Core.Status
         IGenericStatus<T> SetResult(T result);
 
         /// <summary>
+        /// Adds a new error to the status
+        /// </summary>
+        /// <param name="message">The error message</param>
+        /// <param name="userMessage">The user friendly error message</param>
+        /// <returns>This status</returns>
+        new IGenericStatus<T> AddError(string message, string userMessage = "");
+
+        /// <summary>
+        /// Adds a new error to the status if the item is null
+        /// </summary>
+        /// <remarks>This only accepts reference types</remarks>
+        /// <param name="value">>The value that is checked</param>
+        /// <param name="message">The error message</param>
+        /// <param name="userMessage">The user friendly error message</param>
+        /// <returns>This status</returns>
+        new IGenericStatus<T> AddErrorIfNull<TValue>(TValue value, string message, string userMessage = "") where TValue : class;
+
+        /// <summary>
         /// Will combine the result, errors, and exceptions of the provided status with this status. 
         /// If the provided status has a different success message, and no errors, replaces this statuses success message with the provided status.
         /// Will prioritize keeping the status result that exists. If this status doesn't have a result, and the provided status doe, will keep the provided result.

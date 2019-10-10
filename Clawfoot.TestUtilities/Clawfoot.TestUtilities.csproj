@@ -8,7 +8,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/clawfoot-software/Clawfoot/tree/master/Clawfoot.TestUtilities</RepositoryUrl>
     <Copyright>2019 Douglas Gaskell</Copyright>
-    <Version>0.0.1</Version>
+    <Version>0.0.3</Version>
     <LangVersion>7.3</LangVersion>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit.core" Version="2.4.1" />
+    <PackageReference Include="xunit.core" Version="2.3.1" />
   </ItemGroup>
 
 </Project>

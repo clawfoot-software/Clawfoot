@@ -12,7 +12,10 @@ namespace Clawfoot.TestUtilities
         public void Deserialize(IXunitSerializationInfo info)
         {
             Type thisType = this.GetType();
-            PropertyInfo[] props = thisType.GetProperties();
+            PropertyInfo[] props = thisType
+                .GetProperties()
+                .Where(x => x.CanWrite)
+                .ToArray();
 
             foreach (PropertyInfo prop in props)
             {

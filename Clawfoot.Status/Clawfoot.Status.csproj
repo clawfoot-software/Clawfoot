@@ -15,4 +15,12 @@
     <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Interfaces\IStatus.Generic.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Interfaces\IStatus.Generic.cs" />
+  </ItemGroup>
+
 </Project>

@@ -8,16 +8,21 @@ namespace Clawfoot.Status
     public class Error : IError
     {
         public Error() { }
-        public Error(string message, string userMessage = "", int code = -1)
+        public Error(string message, string userMessage = "", int code = -1, string groupName = "", string memberName = "")
         {
             Message = message;
+            GroupName = string.IsNullOrEmpty(groupName) ? String.Empty : groupName;
             UserMessage = string.IsNullOrEmpty(userMessage) ? String.Empty : userMessage;
+            MemberName = string.IsNullOrEmpty(memberName) ? String.Empty : memberName;
             Code = code;
         }
 
         public int Code { get; set; }
+        public string GroupName { get; set; }
         public string Message { get; set; }
         public string UserMessage { get; set; }
+
+        public string MemberName { get; set; }
 
         public override string ToString()
         {
@@ -54,8 +59,10 @@ namespace Clawfoot.Status
             return new Error()
             {
                 Code = attribute.Code,
+                GroupName = attribute.GroupName,
                 Message = attribute.GetFormattedMessage(errorParams),
                 UserMessage = attribute.GetFormattedUserMessage(errorParams),
+                MemberName = attribute.MemberName
             };
         }
 
@@ -84,8 +91,10 @@ namespace Clawfoot.Status
             return new Error()
             {
                 Code = attribute.Code,
+                GroupName = attribute.GroupName,
                 Message = message,
                 UserMessage = userMessage,
+                MemberName = attribute.MemberName
             };
         }
     }

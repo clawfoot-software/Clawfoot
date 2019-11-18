@@ -19,6 +19,8 @@ namespace Clawfoot.Status
         public string Message { get; set; }
         public string UserMessage { get; set; }
 
+        public string MemberName { get; set; }
+
         public string GetFormattedMessage(params string[] values)
         {
             if(values is null || values.Length == 0)

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net461;netcoreapp2.0</TargetFrameworks>
+    <Authors>Douglas Gaskell</Authors>
+    <Company>Clawfoot Software</Company>
+    <Product />
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/clawfoot-software/Clawfoot/tree/master/Clawfoot.Status</RepositoryUrl>
+    <Copyright>2019 Douglas Gaskell</Copyright>
+    <Version>0.1.0</Version>
+    <LangVersion>7.3</LangVersion>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
+  </PropertyGroup>
+
+</Project>

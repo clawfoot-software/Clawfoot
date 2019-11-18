@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29201.188
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.757
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clawfoot.Builders", "Clawfoot.Builders\Clawfoot.Builders.csproj", "{5FD74CED-9F37-49F1-A636-2F8DD7E354F4}"
 EndProject
@@ -15,9 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clawfoot.CrudService", "Cla
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clawfoot.TestUtilities", "Clawfoot.TestUtilities\Clawfoot.TestUtilities.csproj", "{02419211-12E1-4CF8-A725-2FC04D71FDBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clawfoot.Extensions.Automapper", "Clawfoot.Extensions.Automapper\Clawfoot.Extensions.Automapper.csproj", "{03ADDCAE-5671-48BA-A656-8E648CF611DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clawfoot.Extensions.Automapper", "Clawfoot.Extensions.Automapper\Clawfoot.Extensions.Automapper.csproj", "{03ADDCAE-5671-48BA-A656-8E648CF611DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clawfoot.Extensions.Newtonsoft", "Clawfoot.Extensions.Newtonsoft\Clawfoot.Extensions.Newtonsoft.csproj", "{9420B04F-FAA7-4AA4-87E5-4083509757DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clawfoot.Extensions.Newtonsoft", "Clawfoot.Extensions.Newtonsoft\Clawfoot.Extensions.Newtonsoft.csproj", "{9420B04F-FAA7-4AA4-87E5-4083509757DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clawfoot.Status", "Clawfoot.Status\Clawfoot.Status.csproj", "{DB54892C-8777-41C0-8FEB-1074954D3A15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{9420B04F-FAA7-4AA4-87E5-4083509757DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9420B04F-FAA7-4AA4-87E5-4083509757DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9420B04F-FAA7-4AA4-87E5-4083509757DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB54892C-8777-41C0-8FEB-1074954D3A15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB54892C-8777-41C0-8FEB-1074954D3A15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB54892C-8777-41C0-8FEB-1074954D3A15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB54892C-8777-41C0-8FEB-1074954D3A15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

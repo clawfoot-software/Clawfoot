@@ -21,6 +21,10 @@ namespace Clawfoot.Status
 
         public string MemberName { get; set; }
 
+        /// <summary>
+        /// Formats the error message for this error
+        /// If there are no values, returns an unformatted message
+        /// </summary>
         public string GetFormattedMessage(params string[] values)
         {
             if(values is null || values.Length == 0)
@@ -31,14 +35,31 @@ namespace Clawfoot.Status
             return String.Format(Message, values);
         }
 
+        /// <summary>
+        /// Formats the user friendly error message for this error
+        /// If no <see cref="UserMessage"/> exists, than the <see cref="Message"/> will be returned
+        /// If there are no values, returns an unformatted message
+        /// </summary>
         public string GetFormattedUserMessage(params string[] values)
         {
-            if (values is null || values.Length == 0)
+            string message;
+
+            if (String.IsNullOrEmpty(UserMessage))
             {
-                return UserMessage;
+                message = Message;
+            }
+            else
+            {
+                message = UserMessage;
             }
 
-            return String.Format(UserMessage, values);
+
+            if (values is null || values.Length == 0)
+            {
+                return message;
+            }
+
+            return String.Format(message, values);
         }
     }
 }

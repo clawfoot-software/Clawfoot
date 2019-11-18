@@ -17,18 +17,24 @@ namespace Clawfoot.Status
             Code = code;
         }
 
+        /// <inheritdoc/>
         public int Code { get; set; }
+        /// <inheritdoc/>
         public string GroupName { get; set; }
+        /// <inheritdoc/>
         public string Message { get; set; }
+        /// <inheritdoc/>
         public string UserMessage { get; set; }
-
+        /// <inheritdoc/>
         public string MemberName { get; set; }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return Message;
         }
 
+        /// <inheritdoc/>
         public string ToUserString()
         {
             return UserMessage;

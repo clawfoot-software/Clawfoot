@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461;netcoreapp2.0</TargetFrameworks>
     <LangVersion>7.3</LangVersion>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Douglas Gaskell</Authors>
     <Company>Clawfoot Software</Company>
@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Clawfoot.Core\Clawfoot.Core.csproj" />
+    <ProjectReference Include="..\Clawfoot.Status\Clawfoot.Status.csproj" />
   </ItemGroup>
 
 </Project>

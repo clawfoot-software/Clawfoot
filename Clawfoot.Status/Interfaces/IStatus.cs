@@ -99,6 +99,13 @@ namespace Clawfoot.Status.Interfaces
         IStatus AddError(string message, string userMessage = "");
 
         /// <summary>
+        /// Adds a new error to the status
+        /// </summary>
+        /// <param name="error"></param>
+        /// <returns>This status</returns>
+        IStatus AddError(IError error);
+
+        /// <summary>
         /// Adds a new error to the status if the item is null
         /// </summary>
         /// <remarks>This only accepts reference types</remarks>

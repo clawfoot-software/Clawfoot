@@ -32,6 +32,13 @@ namespace Clawfoot.Status.Interfaces
         new IStatus<T> AddError(string message, string userMessage = "");
 
         /// <summary>
+        /// Adds a new error to the status
+        /// </summary>
+        /// <param name="error"></param>
+        /// <returns>This status</returns>
+        new IStatus<T> AddError(IError error);
+
+        /// <summary>
         /// Adds a new error to the status if the item is null
         /// </summary>
         /// <remarks>This only accepts reference types</remarks>
@@ -111,7 +118,7 @@ namespace Clawfoot.Status.Interfaces
 
         /// <summary>
         /// Converts this generic status to one with the provided result type
-        /// Used by the MapTo exxtension method
+        /// Used by the MapTo extension method
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="result"></param>

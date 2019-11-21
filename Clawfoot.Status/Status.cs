@@ -5,6 +5,11 @@ using System.Linq;
 
 namespace Clawfoot.Status
 {
+    /// <summary>
+    /// Exists to help with namespace concerns or locals conflicts
+    /// </summary>
+    public class GenericStatus : Status { }
+
     public class Status : IStatus
     {
         internal const string DefaultSuccessMessage = "Success";

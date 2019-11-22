@@ -69,6 +69,18 @@ namespace Clawfoot.Status
         }
 
         /// <summary>
+        /// Helper method that creates a <see cref="Status"/> with an error message
+        /// </summary>
+        /// <param name="error">The error model</param>
+        /// <returns></returns>
+        public static IStatus AsError(IError error)
+        {
+            Status status = new Status();
+            status.AddError(error);
+            return status;
+        }
+
+        /// <summary>
         /// Helper method that creates a <see cref="Status{T}"/> with an error message
         /// </summary>
         /// <param name="message">The error message</param>
@@ -78,6 +90,18 @@ namespace Clawfoot.Status
         {
             Status<TResult> status = new Status<TResult>();
             status.AddError(message, userMessage);
+            return status;
+        }
+
+        /// <summary>
+        /// Helper method that creates a <see cref="Status{T}"/> with an error message
+        /// </summary>
+        /// <param name="error">The error model</param>
+        /// <returns></returns>
+        public static IStatus<TResult> AsError<TResult>(IError error)
+        {
+            Status<TResult> status = new Status<TResult>();
+            status.AddError(error);
             return status;
         }
 

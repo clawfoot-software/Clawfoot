@@ -81,6 +81,18 @@ namespace Clawfoot.Status
         }
 
         /// <summary>
+        /// Helper method that creates a <see cref="Status"/> with multiple error messages
+        /// </summary>
+        /// <param name="errors">The errors</param>
+        /// <returns>A New Status</returns>
+        public static IStatus AsError(IEnumerable<IError> errors)
+        {
+            Status status = new Status();
+            status.AddErrors(errors);
+            return status;
+        }
+
+        /// <summary>
         /// Helper method that creates a <see cref="Status{T}"/> with an error message
         /// </summary>
         /// <param name="message">The error message</param>
@@ -289,6 +301,17 @@ namespace Clawfoot.Status
         public IStatus AddError(IError error)
         {
             _errors.Add(error);
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IStatus AddErrors(IEnumerable<IError> errors)
+        {
+            foreach(IError error in errors)
+            {
+                _errors.Add(error);
+            }
+            
             return this;
         }
 

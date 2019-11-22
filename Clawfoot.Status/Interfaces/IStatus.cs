@@ -106,6 +106,13 @@ namespace Clawfoot.Status.Interfaces
         IStatus AddError(IError error);
 
         /// <summary>
+        /// Adds multiple errors to the status
+        /// </summary>
+        /// <param name="error"></param>
+        /// <returns>This status</returns>
+        IStatus AddErrors(IEnumerable<IError> errors);
+
+        /// <summary>
         /// Adds a new error to the status if the item is null
         /// </summary>
         /// <remarks>This only accepts reference types</remarks>

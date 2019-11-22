@@ -22,9 +22,9 @@ namespace Clawfoot.Utilities.AspNetCore
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public static async Task<FileStreamHelperModel> ParseAsync(HttpRequest request)
+        public static async Task<FileStreamHelperModel> ParseAsync(HttpRequest request, bool fileOnly = false)
         {
-            (var formSection, var fileSections) = await ExtractSections(request);
+            (var formSection, var fileSections) = await ExtractSections(request, fileOnly);
 
             FormValueProvider formValues = await ParseFormBody(formSection);
             return new FileStreamHelperModel(formValues, fileSections);
@@ -50,7 +50,7 @@ namespace Clawfoot.Utilities.AspNetCore
         /// Sets the _formSection and _fileSections fields.
         /// </summary>
         /// <returns></returns>
-        private static async Task<(FormMultipartSection formSection, List<FileMultipartSection> fileSections)> ExtractSections(HttpRequest request)
+        private static async Task<(FormMultipartSection formSection, List<FileMultipartSection> fileSections)> ExtractSections(HttpRequest request, bool fileOnly = false)
         {
             if (!MultipartRequestHelper.IsMultipartContentType(request.ContentType))
             {
@@ -80,6 +80,11 @@ namespace Clawfoot.Utilities.AspNetCore
                     {
                         formSection = section.AsFormDataSection();
                     }
+                }
+
+                if(fileOnly && fileSections.Count > 0)
+                {
+                    break;
                 }
 
                 // Drains any remaining section body that has not been consumed and

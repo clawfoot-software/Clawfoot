@@ -37,6 +37,11 @@ namespace Clawfoot.Status
         /// <inheritdoc/>
         public string ToUserString()
         {
+            if (string.IsNullOrEmpty(UserMessage))
+            {
+                return Message;
+            }
+
             return UserMessage;
         }
 

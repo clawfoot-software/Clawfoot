@@ -108,13 +108,13 @@ namespace Clawfoot.TestUtilities.Performance
             }
         }
 
-        public static void BenchmarkTime(Action action, int iterationsPerChunk = 100, int iterations = 100)
+        public static PerfTestResult BenchmarkTime(Action action, int iterationsPerChunk = 100, int iterations = 100)
         {
-            Benchmark<TimeWatch>(action, iterationsPerChunk, iterations);
+            return Benchmark2<TimeWatch>(action, iterationsPerChunk, iterations);
         }
 
 
-        static void Benchmark2<T>(Action action, int iterationsPerChunk = 100, int iterations = 100) where T : IStopwatch, new()
+        static PerfTestResult Benchmark2<T>(Action action, int iterationsPerChunk = 100, int iterations = 100) where T : IStopwatch, new()
         {
             //clean Garbage
             GC.Collect();
@@ -154,19 +154,26 @@ namespace Clawfoot.TestUtilities.Performance
 
                     stopwatch.Stop();
                     chunkResults.Timings.Add(stopwatch.Elapsed.Ticks);
+                    
+                    // Show per chunk progress
+                    // Unused
                     if (i + 1 % 10 == 0 || i + 1 == iterationsPerChunk)
                     {
-                        Console.WriteLine($"{i + 1}/{iterationsPerChunk}");
+                        //Console.WriteLine($"{i + 1}/{iterationsPerChunk}");
                     }
+
+                    stopwatch.Reset();
                 }
 
                 results.Timings.Add(chunkResults);
-                Console.WriteLine($"{i}/{iterations}: {chunkResults.Milliseconds} ms | {chunkResults.MsPerIteration} ms/iteration ");
+                Console.WriteLine($"{i+1}/{iterations}: {chunkResults.Milliseconds} ms | {chunkResults.MsPerIteration} ms/iteration ");
             }
 
             Console.WriteLine("Normalized Mean: ");
             Console.WriteLine($"    {results.MeanMs}ms/chunk");
             Console.WriteLine($"    {results.MeanMsPerIteration}ms/iteration");
+
+            return results;
         }
         static void Benchmark<T>(Action action, int iterationsPerChunk = 100, int iterations = 100) where T : IStopwatch, new()
         {

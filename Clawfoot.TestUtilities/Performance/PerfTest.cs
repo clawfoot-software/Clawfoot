@@ -37,7 +37,7 @@ namespace Clawfoot.TestUtilities.Performance
     public class PerfTestChunkResult
     {
         /// <summary>
-        /// The timings for all runs of this Performance Test
+        /// The timings in ticks for all runs of this Performance Test
         /// </summary>
         public virtual List<double> Timings { get; } = new List<double>();
         
@@ -86,16 +86,32 @@ namespace Clawfoot.TestUtilities.Performance
         /// <summary>
         /// The normalized mean in milliseconds for each chunk
         /// </summary>
-        public double MeanMs => Math.Truncate(MeanTicks / Timings.Count * 1000) / 1000;
+        public double MeanMs =>  Math.Truncate(MeanTicks / 10000 * 1000) / 1000;
 
         /// <summary>
         /// The normalized mean for each iteration of the test in Ticks
         /// </summary>
-        public double MeanTicksPerIteration => Timings.SelectMany(x => x.Timings).ToList().NormalizedMean();
+        public double MeanTicksPerIteration => Math.Truncate(Timings.SelectMany(x => x.Timings).ToList().NormalizedMean() * 1000) / 1000;
 
         /// <summary>
         /// The normalized mean in milliseconds for each iteration
         /// </summary>
-        public double MeanMsPerIteration => Math.Truncate(MeanTicksPerIteration / Timings.Count * 1000) / 1000;
+        /// 
+
+        public double MeanMsPerIteration
+        {
+            get
+            {
+                double mean = Timings.SelectMany(
+                    x => x.Timings.Select(n => n / 10000).ToList()
+                )
+                .ToList()
+                .NormalizedMean();
+
+                return Math.Truncate(mean * 1000) / 1000;
+
+            }
+        }
+        //public double MeanMsPerIteration => Math.Truncate(Ticks / Timings.SelectMany(x => x.Timings).Count() / 10000 * 1000) / 1000;
     }
 }

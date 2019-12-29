@@ -19,8 +19,6 @@ namespace Clawfoot.TestUtilities.Performance
             void Reset();
         }
 
-
-
         class TimeWatch : IStopwatch
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -113,6 +111,10 @@ namespace Clawfoot.TestUtilities.Performance
             return Benchmark<TimeWatch>(action, iterationsPerChunk, iterations);
         }
 
+        public static void BenchmarkCpu(Action action, int iterationsPerChunk = 100, int iterations = 100)
+        {
+            Benchmark<CpuWatch>(action, iterations);
+        }
 
         static PerfTestResult Benchmark<T>(Action action, int iterationsPerChunk = 100, int iterations = 100) where T : IStopwatch, new()
         {
@@ -176,9 +178,6 @@ namespace Clawfoot.TestUtilities.Performance
             return results;
         }
 
-        public static void BenchmarkCpu(Action action, int iterations = 10000)
-        {
-            Benchmark<CpuWatch>(action, iterations);
-        }
+
     }
 }

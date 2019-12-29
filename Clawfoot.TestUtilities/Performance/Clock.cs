@@ -110,11 +110,11 @@ namespace Clawfoot.TestUtilities.Performance
 
         public static PerfTestResult BenchmarkTime(Action action, int iterationsPerChunk = 100, int iterations = 100)
         {
-            return Benchmark2<TimeWatch>(action, iterationsPerChunk, iterations);
+            return Benchmark<TimeWatch>(action, iterationsPerChunk, iterations);
         }
 
 
-        static PerfTestResult Benchmark2<T>(Action action, int iterationsPerChunk = 100, int iterations = 100) where T : IStopwatch, new()
+        static PerfTestResult Benchmark<T>(Action action, int iterationsPerChunk = 100, int iterations = 100) where T : IStopwatch, new()
         {
             //clean Garbage
             GC.Collect();
@@ -174,67 +174,6 @@ namespace Clawfoot.TestUtilities.Performance
             Console.WriteLine($"    {results.MeanMsPerIteration}ms/iteration");
 
             return results;
-        }
-        static void Benchmark<T>(Action action, int iterationsPerChunk = 100, int iterations = 100) where T : IStopwatch, new()
-        {
-            //clean Garbage
-            GC.Collect();
-
-            //wait for the finalizer queue to empty
-            GC.WaitForPendingFinalizers();
-
-            //clean Garbage
-            GC.Collect();
-
-            //warm up
-            action();
-
-            var stopwatch = new T();
-            var timings = new double[iterations];
-
-            int cursorLeft = Console.CursorLeft;
-            int cursorTop = Console.CursorTop;
-            for (int i = 0; i < iterations; i++)
-            {
-                stopwatch.Reset();
-                if (i > 0)
-                {
-                    cursorLeft = Console.CursorLeft;
-                    cursorTop = Console.CursorTop;
-                }
-
-                for (int j = 0; j < iterationsPerChunk; j++)
-                {
-                    Console.SetCursorPosition(cursorLeft, cursorTop);
-                    stopwatch.Start();
-
-                    action();
-
-                    stopwatch.Stop();
-                    if (i + 1 % 10 == 0 || i + 1 == iterationsPerChunk)
-                    {
-                        Console.WriteLine($"{i + 1}/{iterationsPerChunk}");
-                    }
-                }
-
-
-                timings[i] = stopwatch.Elapsed.Ticks;
-
-                var chunkTime = timings[i] / 10000;
-                var chunkPerIteration = Math.Truncate(chunkTime / iterationsPerChunk * 1000) / 1000;
-                chunkTime = Math.Truncate(chunkTime * 1000) / 1000;
-
-                Console.WriteLine($"{i}/{iterations}: {chunkTime} ms | {chunkPerIteration} ms/iteration ");
-            }
-            var normalized = timings.NormalizedMean();
-            var perIteration = Math.Truncate(normalized / iterationsPerChunk * 1000) / 1000;
-            normalized = Math.Truncate(normalized / 10000 * 1000) / 1000;
-            perIteration = Math.Truncate(perIteration / 10000 * 1000) / 1000;
-
-
-            Console.WriteLine("Normalized Mean: ");
-            Console.WriteLine($"    {normalized}ms/chunk");
-            Console.WriteLine($"    {perIteration}ms/iteration");
         }
 
         public static void BenchmarkCpu(Action action, int iterations = 10000)

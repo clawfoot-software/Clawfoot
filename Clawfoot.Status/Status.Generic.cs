@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Clawfoot.Status
 {
@@ -155,6 +156,30 @@ namespace Clawfoot.Status
             try
             {
                 T result = func.Invoke();
+                SetResult(result);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    AddError(ex.Message);
+                }
+                else
+                {
+                    AddException(ex);
+                }
+            }
+
+            return default(T);
+        }
+
+        /// <inheritdoc/>
+        public async Task<T> InvokeAndSetResultAsync(Func<Task<T>> func, bool keepException = false)
+        {
+            try
+            {
+                T result = await func.Invoke();
                 SetResult(result);
                 return result;
             }

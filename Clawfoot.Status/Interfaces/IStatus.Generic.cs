@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Clawfoot.Status.Interfaces
 {
@@ -132,5 +133,14 @@ namespace Clawfoot.Status.Interfaces
         /// <param name="keepException"></param>
         /// <returns></returns>
         T InvokeAndSetResult(Func<T> func, bool keepException = false);
+
+        /// <summary>
+        /// Invokes the delegate, and if it throws an exception, records it in the current status and returns null.
+        /// If success, sets the status result, and returns the result of the delegate
+        /// </summary>
+        /// <param name="func"></param>
+        /// <param name="keepException"></param>
+        /// <returns></returns>
+        Task<T> InvokeAndSetResultAsync(Func<Task<T>> func, bool keepException = false);
     }
 }

@@ -46,6 +46,18 @@ namespace Clawfoot.Status
         }
 
         /// <summary>
+        /// Gets the message string from the enum error
+        /// </summary>
+        /// <typeparam name="TErrorEnum"></typeparam>
+        /// <param name="error"></param>
+        /// <param name="errorParams"></param>
+        /// <returns></returns>
+        public static string GetMessage<TErrorEnum>(TErrorEnum error, params string[] errorParams) where TErrorEnum : Enum
+        {
+            return From(error, errorParams).ToString();
+        }
+
+        /// <summary>
         /// Generates the error details from the enum value
         /// Requires that the enum value has the [Error] Attribute
         /// </summary>

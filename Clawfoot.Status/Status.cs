@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Clawfoot.Status
 {
@@ -150,6 +151,21 @@ namespace Clawfoot.Status
         /// </summary>
         /// <param name="action"></param>
         /// <param name="keepException"></param>
+        /// <returns></returns>
+        public async static Task<IStatus> InvokeAndReturnStatusAsync(Func<Task> action, bool keepException = false)
+        {
+            IStatus status = new Status();
+
+            return await status.InvokeAsync(action, keepException);
+
+        }
+
+        /// <summary>
+        /// Helper method that invokes the delegate, and if it throws an exception, records it in a returned status
+        /// Returns a new status
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="keepException"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
         public static IStatus InvokeAndReturnStatus<TParam>(Action<TParam> action, TParam obj, bool keepException = false)
@@ -157,6 +173,22 @@ namespace Clawfoot.Status
             IStatus status = new Status();
 
             return status.Invoke(action, obj, keepException);
+
+        }
+
+        /// <summary>
+        /// Helper method that invokes the delegate, and if it throws an exception, records it in a returned status
+        /// Returns a new status
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="keepException"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public async static Task<IStatus> InvokeAndReturnStatusAsync<TParam>(Func<TParam, Task> action, TParam obj, bool keepException = false)
+        {
+            IStatus status = new Status();
+
+            return await status.InvokeAsync(action, obj, keepException);
 
         }
 
@@ -188,6 +220,33 @@ namespace Clawfoot.Status
         }
 
         /// <summary>
+        /// Invokes the delegate, and if it throws an exception, records it in a new Status.
+        /// If success, return the result of the delegate as a new Status
+        /// </summary>
+        /// <param name="func">The delegate</param>
+        /// <param name="keepException">To keep the exception in the stus, or just record the error message</param>
+        /// <returns></returns>
+        public async static Task<IStatus<TResult>> InvokeAndReturnStatusResultAsync<TResult>(Func<Task<TResult>> func, bool keepException = false)
+        {
+            try
+            {
+                TResult result = await func.Invoke();
+                return AsSuccess<TResult>(result);
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    return Status.AsError<TResult>(ex.Message);
+                }
+
+                Status<TResult> status = new Status<TResult>();
+                status.AddException(ex);
+                return status;
+            }
+        }
+
+        /// <summary>
         /// Invokes the delegate, and returns a merges status based on the return or the failure of the delegate
         /// </summary>
         /// <param name="func"></param>
@@ -197,6 +256,20 @@ namespace Clawfoot.Status
         {
             IStatus status = new Status();
             status.InvokeAndMergeStatus(func, keepException);
+
+            return status;
+        }
+
+        /// <summary>
+        /// Invokes the delegate, and returns a merges status based on the return or the failure of the delegate
+        /// </summary>
+        /// <param name="func"></param>
+        /// <param name="keepException"></param>
+        /// <returns></returns>
+        public async static Task<IStatus> InvokeAndReturnMergedStatus(Func<Task<IStatus>> func, bool keepException = false)
+        {
+            IStatus status = new Status();
+            await status.InvokeAndMergeStatusAsync(func, keepException);
 
             return status;
         }
@@ -378,6 +451,28 @@ namespace Clawfoot.Status
         }
 
         /// <inheritdoc/>
+        public async Task<IStatus> InvokeAsync(Func<Task> action, bool keepException = false)
+        {
+            try
+            {
+                await action.Invoke();
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    AddError(ex.Message);
+                }
+                else
+                {
+                    AddException(ex);
+                }
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc/>
         public IStatus Invoke<TParam>(Action<TParam> action, TParam obj, bool keepException = false)
         {
             try
@@ -400,11 +495,56 @@ namespace Clawfoot.Status
         }
 
         /// <inheritdoc/>
+        public async Task<IStatus> InvokeAsync<TParam>(Func<TParam, Task> action, TParam obj, bool keepException = false)
+        {
+            try
+            {
+                await action.Invoke(obj);
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    AddError(ex.Message);
+                }
+                else
+                {
+                    AddException(ex);
+                }
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc/>
         public IStatus InvokeAndMergeStatus(Func<IStatus> func, bool keepException = false)
         {
             try
             {
                 IStatus resultStatus = func.Invoke();
+                resultStatus.MergeIntoStatus(this);
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    AddError(ex.Message);
+                }
+                else
+                {
+                    AddException(ex);
+                }
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IStatus> InvokeAndMergeStatusAsync(Func<Task<IStatus>> func, bool keepException = false)
+        {
+            try
+            {
+                IStatus resultStatus = await func.Invoke();
                 resultStatus.MergeIntoStatus(this);
             }
             catch (Exception ex)
@@ -447,11 +587,58 @@ namespace Clawfoot.Status
         }
 
         /// <inheritdoc/>
+        public async Task<TResult> InvokeMergeStatusAndReturnResultAsync<TResult>(Func<Task<IStatus<TResult>>> func, bool keepException = false)
+        {
+            try
+            {
+                IStatus<TResult> resultStatus = await func.Invoke();
+                resultStatus.MergeIntoStatus(this); //Merge errors into this
+                return resultStatus.Result;
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    AddError(ex.Message);
+                }
+                else
+                {
+                    AddException(ex);
+                }
+            }
+
+            return default(TResult);
+        }
+
+        /// <inheritdoc/>
         public TResult InvokeAndReturnResult<TResult>(Func<TResult> func, bool keepException = false)
         {
             try
             {
                 TResult result = func.Invoke();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                if (!keepException)
+                {
+                    AddError(ex.Message);
+                }
+                else
+                {
+                    AddException(ex);
+                }
+            }
+
+            return default(TResult);
+        }
+
+        /// <inheritdoc/>
+        public async Task<TResult> InvokeAndReturnResultAsync<TResult>(Func<Task<TResult>> func, bool keepException = false)
+        {
+            try
+            {
+                TResult result = await func.Invoke();
                 return result;
             }
             catch (Exception ex)

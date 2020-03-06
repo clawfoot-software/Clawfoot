@@ -8,7 +8,66 @@ namespace Clawfoot.Extensions
 {
     public static class StringExtensions
     {
-        //From GenericServices
+        /// <summary>
+        /// Determines if a string is alphanumeric, accepting NON A-z unicode letters such as chinese characters
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static bool IsLooseAlphaNumeric(this string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return false;
+
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (!char.IsLetterOrDigit(str[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// Determines if a string is stringly alphanumeric, limiting to A-Z 0-9
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static bool IsAsciiAlphaNumeric(this string str)
+        {
+            if (string.IsNullOrEmpty(str))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i] < 48) // Numeric are 48 -> 57
+                {
+                    return false;
+                }
+
+                if (str[i] > 57 && str[i] < 65) // Capitals are 65 -> 90
+                {
+                    return false;
+                }
+
+                if (str[i] > 90 && str[i] < 97) // Lowers are 97 -> 122
+                {
+                    return false;
+                }
+
+                if (str[i] > 122)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// This splits up a string based on capital letters
         /// e.g. "MyAction" would become "My Action" and "My10Action" would become "My10 Action"

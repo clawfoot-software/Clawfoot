@@ -119,6 +119,18 @@ namespace Clawfoot.Status
         }
 
         /// <summary>
+        /// Helper method that creates a <see cref="Status{T}"/> with multiple error messages
+        /// </summary>
+        /// <param name="errors">The errors</param>
+        /// <returns>A New Status</returns>
+        public static IStatus AsError<TResult>(IEnumerable<IError> errors)
+        {
+            Status<TResult> status = new Status<TResult>();
+            status.AddErrors(errors);
+            return status;
+        }
+
+        /// <summary>
         /// Helper method that creates a <see cref="Status"/> with the provided exception
         /// </summary>
         /// <param name="ex">The exception</param>
@@ -126,6 +138,18 @@ namespace Clawfoot.Status
         public static IStatus AsErrorWithException(Exception ex)
         {
             Status status = new Status();
+            status.AddException(ex);
+            return status;
+        }
+
+        /// <summary>
+        /// Helper method that creates a generic <see cref="Status{T}"/> with the provided exception
+        /// </summary>
+        /// <param name="ex">The exception</param>
+        /// <returns></returns>
+        public static IStatus<TResult> AsErrorWithException<TResult>(Exception ex)
+        {
+            Status<TResult> status = new Status<TResult>();
             status.AddException(ex);
             return status;
         }

@@ -123,7 +123,7 @@ namespace Clawfoot.Status
         /// </summary>
         /// <param name="errors">The errors</param>
         /// <returns>A New Status</returns>
-        public static IStatus AsError<TResult>(IEnumerable<IError> errors)
+        public static IStatus<TResult> AsError<TResult>(IEnumerable<IError> errors)
         {
             Status<TResult> status = new Status<TResult>();
             status.AddErrors(errors);

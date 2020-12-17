@@ -1,9 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Clawfoot.Core.Enums
+﻿namespace Clawfoot.Core.Enums
 {
     /// <summary>
     /// The configuration type for an automapper config

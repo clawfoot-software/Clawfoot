@@ -53,8 +53,6 @@ namespace Clawfoot.Utilities.AutoMapper
         /// <inheritdoc/>
         public void ConfigureDefaultMapper(Action<IMapperConfigurationExpression> configExpression, TMapperConfigTypes defaultType)
         {
-            TryInitilizeStaticMapper(configExpression);
-
             AddOrReplaceConfiguration(defaultType, configExpression);
             DefaultConfigType = defaultType;
         }
@@ -62,8 +60,6 @@ namespace Clawfoot.Utilities.AutoMapper
         /// <inheritdoc/>
         public void ConfigureDefaultMapper(MapperConfigurationExpression config, TMapperConfigTypes defaultType)
         {
-            TryInitilizeStaticMapper(config);
-
             AddOrReplaceConfiguration(defaultType, config);
             DefaultConfigType = defaultType;
         }
@@ -161,25 +157,5 @@ namespace Clawfoot.Utilities.AutoMapper
                 throw new ArgumentException($"Config Type {type} already exists in mapper cache");
             }
         }
-
-        // Necessary since it can throw an exception if initilized twice. Hack for now since this is being deprecated
-        private void TryInitilizeStaticMapper(Action<IMapperConfigurationExpression> configExpression)
-        {
-            try
-            {
-                Mapper.Initialize(configExpression);
-            }
-            catch {}
-        }
-
-        private void TryInitilizeStaticMapper(MapperConfigurationExpression config)
-        {
-            try
-            {
-                Mapper.Initialize(config);
-            }
-            catch { }
-        }
-
     }
 }

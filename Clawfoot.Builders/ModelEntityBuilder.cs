@@ -9,10 +9,14 @@ namespace Clawfoot.Builders
 {
     public class ModelEntityBuilder<TModel, TEntity> : Builder<TModel>, IModelEntityBuilder<TModel, TEntity> where TEntity : IEntity, new() where TModel : new()
     {
+        private readonly IMapper _mapper;
         public ModelEntityBuilder() : base() { }
 
-        public ModelEntityBuilder(IModelDefaultValuesCache modelDefaults, IForeignKeyPropertyCache propertyCache)
-            : base(modelDefaults, propertyCache) { }
+        public ModelEntityBuilder(IModelDefaultValuesCache modelDefaults, IForeignKeyPropertyCache propertyCache, IMapper mapper)
+            : base(modelDefaults, propertyCache) 
+        {
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        }
 
 
         public IGenericBuilder<TEntity> EntityBuilder => new BuilderBase<TEntity>(_modelDefaults, _propertyCache);
@@ -25,7 +29,7 @@ namespace Clawfoot.Builders
         /// <returns></returns>
         public virtual TEntity BuildAsEntity(bool fillInForeignKeysIds = true)
         {
-            return Mapper.Map<TEntity>(Build());
+            return _mapper.Map<TEntity>(Build());
         }
 
         /// <summary>

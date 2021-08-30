@@ -1,6 +1,7 @@
 ﻿using Clawfoot.Core.Enums;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -18,6 +19,15 @@ namespace Clawfoot.Extensions
             if (string.IsNullOrEmpty(str))
                 return false;
 
+#if NETCOREAPP3_0_OR_GREATER || NET5_0
+            foreach (Rune rune in str.EnumerateRunes())
+            {
+                if (!Rune.IsLetterOrDigit(rune))
+                {
+                    return false;
+                }
+            }
+#else
             for (int i = 0; i < str.Length; i++)
             {
                 if (!char.IsLetterOrDigit(str[i]))
@@ -25,8 +35,84 @@ namespace Clawfoot.Extensions
                     return false;
                 }
             }
+#endif
+
 
             return true;
+        }
+
+        /// <summary>
+        /// Determines if a string is alphanumeric, accepting NON A-z unicode letters such as chinese characters
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static bool IsLooseAlphaNumeric(this string str, HashSet<char> allowable)
+        {
+            if (string.IsNullOrEmpty(str))
+                return false;
+
+#if NETCOREAPP3_0_OR_GREATER || NET5_0
+            HashSet<Rune> allowedRunes = allowable.Select(x => new Rune(x)).ToHashSet();
+            foreach (Rune rune in str.EnumerateRunes())
+            {
+                if (!Rune.IsLetterOrDigit(rune) && !allowedRunes.Contains(rune))
+                {
+                    return false;
+                }
+            }
+#else
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (!char.IsLetterOrDigit(str[i]) && !allowable.Contains(str[i]))
+                {
+                    return false;
+                }
+            }
+#endif
+
+            return true;
+        }
+
+        public static bool HasMultipleConsecutiveSpaces(this string str)
+        {
+            int spacesInARow = 0;
+
+#if NETCOREAPP3_0_OR_GREATER || NET5_0
+            foreach (Rune rune in str.EnumerateRunes())
+            {
+                if (Rune.IsWhiteSpace(rune))
+                {
+                    if (spacesInARow == 1)
+                    {
+                        return true;
+                    }
+                    spacesInARow++;
+                    continue;
+                }
+                else
+                {
+                    spacesInARow = 0;
+                }
+            }
+#else
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (!char.IsWhiteSpace(str[i]))
+                {
+                    if (spacesInARow == 1)
+                    {
+                        return true;
+                    }
+                    spacesInARow++;
+                    continue;
+                } 
+                else
+                {
+                    spacesInARow = 0;
+                }
+            }
+#endif
+            return false;
         }
 
 

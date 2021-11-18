@@ -1,5 +1,6 @@
 ﻿using Clawfoot.Status;
 using Clawfoot.Status.Interfaces;
+using Clawfoot.TestUtilities.Performance;
 using System;
 
 namespace TestingProgram
@@ -8,9 +9,32 @@ namespace TestingProgram
     {
         static void Main(string[] args)
         {
-            TestStatus();
+            // TestStatus();
+            TestTestUtilityClock();
 
             Console.ReadLine();
+        }
+
+        static void TestTestUtilityClock()
+        {
+            Action<ClockTestState> action = (ClockTestState state) =>
+            {
+                for(int i = 0; i < state.Iterations; i++)
+                {
+                    string thing = "asdkjfaslkdjfaskljdfadsdfsdfsdfaweradfasdfasdfasdfasdfasdfasdfadf.awekljfalskjdfalksdjfhlaksdjfhsfahsdf";
+                    thing.IndexOf('6');
+                }
+            };
+
+            Func<ClockTestState> setup = () =>
+           {
+               return new ClockTestState()
+               {
+                   Iterations = 750
+               };
+           };
+
+            var perfResults = Clock.BenchmarkTime(action, setup, 1000);
         }
 
         static void TestStatus()
@@ -25,6 +49,11 @@ namespace TestingProgram
             Console.WriteLine();
             Console.WriteLine(status.ToUserFriendlyString());
         }
+    }
+
+    class ClockTestState
+    {
+        public int Iterations { get; set; }
     }
 
     public enum AuthError

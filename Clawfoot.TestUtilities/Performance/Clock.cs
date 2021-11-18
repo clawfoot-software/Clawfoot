@@ -111,13 +111,21 @@ namespace Clawfoot.TestUtilities.Performance
             return Benchmark<TimeWatch>(action, iterationsPerChunk, iterations);
         }
 
+        public static PerfTestResult BenchmarkTime<TState>(Action<TState> action, Func<TState> setup, int iterationsPerChunk = 100, int iterations = 100)
+        {
+            return Benchmark<TimeWatch, TState>(action, setup, iterationsPerChunk, iterations);
+        }
+
         public static void BenchmarkCpu(Action action, int iterationsPerChunk = 100, int iterations = 100)
         {
             Benchmark<CpuWatch>(action, iterations);
         }
 
-        static PerfTestResult Benchmark<T>(Action action, int iterationsPerChunk = 100, int iterations = 100) where T : IStopwatch, new()
+        static PerfTestResult Benchmark<T>(Action action, int iterationsPerChunk = 100, int iterations = 100) 
+            where T : IStopwatch, new()
         {
+            bool consoleAvailable = Console.LargestWindowWidth != 0;
+
             //clean Garbage
             GC.Collect();
 
@@ -133,8 +141,8 @@ namespace Clawfoot.TestUtilities.Performance
             var stopwatch = new T();
             var results = new PerfTestResult();
 
-            int cursorLeft = Console.CursorLeft;
-            int cursorTop = Console.CursorTop;
+            int cursorLeft = consoleAvailable ? Console.CursorLeft : 0;
+            int cursorTop = consoleAvailable ? Console.CursorTop : 0;
 
             for (int i = 0; i < iterations; i++)
             {
@@ -143,13 +151,20 @@ namespace Clawfoot.TestUtilities.Performance
                 stopwatch.Reset();
                 if (i > 0)
                 {
-                    cursorLeft = Console.CursorLeft;
-                    cursorTop = Console.CursorTop;
+                    if (consoleAvailable)
+                    {
+                        cursorLeft = Console.CursorLeft;
+                        cursorTop = Console.CursorTop;
+                    }
                 }
 
                 for (int j = 0; j < iterationsPerChunk; j++)
                 {
-                    Console.SetCursorPosition(cursorLeft, cursorTop);
+                    if (consoleAvailable)
+                    {
+                        Console.SetCursorPosition(cursorLeft, cursorTop);
+                    }
+                    
                     stopwatch.Start();
 
                     action();
@@ -168,12 +183,99 @@ namespace Clawfoot.TestUtilities.Performance
                 }
 
                 results.Timings.Add(chunkResults);
-                Console.WriteLine($"{i+1}/{iterations}: {chunkResults.Milliseconds} ms | {chunkResults.MsPerIteration} ms/iteration ");
+                if (consoleAvailable)
+                {
+                    Console.WriteLine($"{i + 1}/{iterations}: {chunkResults.Milliseconds} ms | {chunkResults.MsPerIteration} ms/iteration ");
+                }                
             }
 
-            Console.WriteLine("Normalized Mean: ");
-            Console.WriteLine($"    {results.MeanMs}ms/chunk");
-            Console.WriteLine($"    {results.MeanMsPerIteration}ms/iteration");
+            if (consoleAvailable)
+            {
+                Console.WriteLine("Normalized Mean: ");
+                Console.WriteLine($"    {results.MeanMs}ms/chunk");
+                Console.WriteLine($"    {results.MeanMsPerIteration}ms/iteration");
+            }
+
+            return results;
+        }
+
+        static PerfTestResult Benchmark<TStopwatch, TState>(Action<TState> action, Func<TState> setup, int iterationsPerChunk = 100, int iterations = 100)
+            where TStopwatch : IStopwatch, new()
+        {
+            bool consoleAvailable = Console.LargestWindowWidth != 0;
+
+            //clean Garbage
+            GC.Collect();
+
+            //wait for the finalizer queue to empty
+            GC.WaitForPendingFinalizers();
+
+            //clean Garbage
+            GC.Collect();
+
+            TState warmupState = setup();
+            //warm up
+            action(warmupState);
+
+            var stopwatch = new TStopwatch();
+            var results = new PerfTestResult();
+
+            int cursorLeft = consoleAvailable ? Console.CursorLeft : 0;
+            int cursorTop = consoleAvailable ? Console.CursorTop : 0;
+
+            for (int i = 0; i < iterations; i++)
+            {
+                var chunkResults = new PerfTestChunkResult();
+
+                stopwatch.Reset();
+                if (i > 0)
+                {
+                    if (consoleAvailable)
+                    {
+                        cursorLeft = Console.CursorLeft;
+                        cursorTop = Console.CursorTop;
+                    }
+                }
+
+                for (int j = 0; j < iterationsPerChunk; j++)
+                {
+                    if (consoleAvailable)
+                    {
+                        Console.SetCursorPosition(cursorLeft, cursorTop);
+                    }
+
+                    TState state = setup();
+
+                    stopwatch.Start();
+
+                    action(state);
+
+                    stopwatch.Stop();
+                    chunkResults.Timings.Add(stopwatch.Elapsed.Ticks);
+
+                    // Show per chunk progress
+                    // Unused
+                    if (i + 1 % 10 == 0 || i + 1 == iterationsPerChunk)
+                    {
+                        //Console.WriteLine($"{i + 1}/{iterationsPerChunk}");
+                    }
+
+                    stopwatch.Reset();
+                }
+
+                results.Timings.Add(chunkResults);
+                if (consoleAvailable)
+                {
+                    Console.WriteLine($"{i + 1}/{iterations}: {chunkResults.Milliseconds} ms | {chunkResults.MsPerIteration} ms/iteration ");
+                }
+            }
+
+            if (consoleAvailable)
+            {
+                Console.WriteLine("Normalized Mean: ");
+                Console.WriteLine($"    {results.MeanMs}ms/chunk");
+                Console.WriteLine($"    {results.MeanMsPerIteration}ms/iteration");
+            }
 
             return results;
         }

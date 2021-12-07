@@ -5,7 +5,19 @@ using System.Threading.Tasks;
 
 namespace Clawfoot.Status.Interfaces
 {
-    public interface IStatus<T> : IStatus
+    /// <summary>
+    /// Marker interface to enable pattern matching since we cannot pattenr match against unknown generics
+    /// </summary>
+    public interface IResultStatus : IStatus
+    {
+        /// <summary>
+        /// If this status has a result.
+        /// Returns false if there are errors, even if a result has been set
+        /// </summary>
+        bool HasResult { get; }
+    }
+
+    public interface IStatus<T> : IResultStatus, IStatus
     {
         /// <summary>
         /// The return result, or if there are errors it will return default(T)

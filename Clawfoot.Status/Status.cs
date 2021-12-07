@@ -155,6 +155,24 @@ namespace Clawfoot.Status
         }
 
         /// <summary>
+        /// Sugar to create a status from an error enum. 
+        /// </summary>
+        public static IStatus FromError<TErrorEnum>(TErrorEnum errorEnum, params string[] errorParams) where TErrorEnum : Enum
+        {
+            IError erorr = Error.From<TErrorEnum>(errorEnum, errorParams);
+            return Status.AsError(erorr);
+        }
+
+        /// <summary>
+        /// Sugar to create a status from an error enum. 
+        /// </summary>
+        public static IStatus FromError<TErrorEnum>(TErrorEnum errorEnum, string message, string userMessage = "") where TErrorEnum : Enum
+        {
+            IError erorr = Error.From<TErrorEnum>(errorEnum, message, userMessage);
+            return Status.AsError(erorr);
+        }
+
+        /// <summary>
         /// Helper method that invokes the delegate, and if it throws an exception, records it in a returned status
         /// Returns a new status
         /// </summary>

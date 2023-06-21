@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -17,18 +18,14 @@ namespace Clawfoot.TestUtilities
     
     public class TestModelBuilder<TModel> where TModel : class
     {
-        private List<Action> actions = new List<Action>();
-        private TModel instance;
+        private readonly List<Action> _actions = new List<Action>();
+        private TModel? _instance;
         
-        public TestModelBuilder()
-        {
-            instance = CreateInstance();
-        }
+        public TestModelBuilder() { }
 
         public TestModelBuilder(TModel instance)
         {
-            if(instance is null) throw new ArgumentNullException(nameof(instance), "Cannot create a TestModelBuilder with a null instance through this constructor");
-            this.instance = instance;
+            _instance = instance ?? throw new ArgumentNullException(nameof(instance), "Cannot create a TestModelBuilder with a null instance through this constructor");
         }
 
         //---------------------------------------------------------
@@ -43,25 +40,36 @@ namespace Clawfoot.TestUtilities
             return (TModel)Activator.CreateInstance(typeof(TModel), true);
         }
 
-        public TestModelBuilder<TModel> With<TMember>(Expression<Func<TModel, TMember>> memberExpression, TMember value, MemberTypes memberType = MemberTypes.Property)
+        public TestModelBuilder<TModel> With<TMember>(Expression<Func<TModel, TMember>> memberExpression,
+            TMember value,
+            MemberTypes memberType = MemberTypes.Property)
         {
             string memberName = ((MemberExpression)memberExpression.Body).Member.Name;
-            actions.Add(() => Set(memberName, value, memberType));
+            _actions.Add(() => Set(memberName, value, memberType));
             return this;
         }
         
-        public TestModelBuilder<TModel> With<TMember>(Expression<Func<TModel, TMember>> memberExpression, Func<TestModelBuilder<TMember>, TestModelBuilder<TMember>> builder, MemberTypes memberType = MemberTypes.Property)
+        public TestModelBuilder<TModel> With<TMember>(Expression<Func<TModel, TMember>> memberExpression,
+            Func<TestModelBuilder<TMember>, TestModelBuilder<TMember>> builder,
+            MemberTypes memberType = MemberTypes.Property)
             where TMember : class
         {
             TMember value = builder(new TestModelBuilder<TMember>()).Build();
-            string memberName = ((MemberExpression)memberExpression.Body).Member.Name;
-            actions.Add(() => Set(memberName, value, memberType));
-            return this;
+            return With(memberExpression, value, memberType);
+        }
+        
+        public TestModelBuilder<TModel> With<TMember>(Expression<Func<TModel, TMember>> memberExpression,
+            Func<TestModelBuilder<TMember>, TMember> builder,
+            MemberTypes memberType = MemberTypes.Property)
+            where TMember : class
+        {
+            TMember value = builder(new TestModelBuilder<TMember>());
+            return With(memberExpression, value, memberType);
         }
 
         public TestModelBuilder<TModel> With(string memberName, object value, MemberTypes memberType = MemberTypes.Property)
         {
-            actions.Add(() => Set(memberName, value, memberType));
+            _actions.Add(() => Set(memberName, value, memberType));
             return this;
         }
 
@@ -71,17 +79,63 @@ namespace Clawfoot.TestUtilities
         /// <returns></returns>
         public TModel Build()
         {
-            foreach (Action action in actions)
+            _instance = TryCreateInstance();
+            
+            foreach (Action action in _actions)
             {
                 action.Invoke();
             }
 
-            return instance;
+            return _instance;
+        }
+        
+        /// <summary>
+        /// Builds the model using the specified derived type
+        /// </summary>
+        public TModel Build<TBuildWith>()
+            where TBuildWith : class, TModel
+        {
+            _instance = TryCreateInstance<TBuildWith>();
+            
+            foreach (Action action in _actions)
+            {
+                action.Invoke();
+            }
+
+            return _instance;
         }
 
 
         //---------------------------------------------------------
         //===== Private Helpers =====
+        
+        private TModel TryCreateInstance()
+        {
+            Type modelType = typeof(TModel);
+
+            if (modelType.IsInterface)
+            {
+                throw new InvalidOperationException("Cannot construct instance of interface. Please use the Build<TBuildWith> overload to specify a concrete type.");
+            }
+            
+            if (_instance is null)
+            {
+                return (TModel)Activator.CreateInstance(typeof(TModel), true);
+            }
+
+            return _instance;
+        }
+        
+        private TModel TryCreateInstance<TBuildWith>()
+            where TBuildWith : class, TModel
+        {
+            if (_instance is null)
+            {
+                return (TModel)Activator.CreateInstance(typeof(TBuildWith), true)! ?? throw new Exception($"Failed to create instance of type {typeof(TBuildWith)}");
+            }
+
+            return _instance;
+        }
 
         private void Set(string name, object value, MemberTypes memberType)
         {
@@ -98,13 +152,13 @@ namespace Clawfoot.TestUtilities
         private void SetProperty(string name, object value)
         {
             Type type = typeof(TModel);
-            GetProperty(type, name).SetValue(instance, value);
+            GetProperty(type, name).SetValue(_instance, value);
         }
 
         private void SetField(string name, object value)
         {
             Type type = typeof(TModel);
-            GetField(type, name).SetValue(instance, value);
+            GetField(type, name).SetValue(_instance, value);
         }
 
         private PropertyInfo GetProperty(Type type, string name)

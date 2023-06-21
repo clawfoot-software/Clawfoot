@@ -6,11 +6,20 @@ using System.Text;
 
 namespace Clawfoot.TestUtilities
 {
+    public static class TestModelBuilder
+    {
+        public static TestModelBuilder<TModel> For<TModel>()
+            where TModel : class
+        {
+            return new TestModelBuilder<TModel>();
+        }
+    }
+    
     public class TestModelBuilder<TModel> where TModel : class
     {
         private List<Action> actions = new List<Action>();
         private TModel instance;
-
+        
         public TestModelBuilder()
         {
             instance = CreateInstance();
@@ -34,17 +43,25 @@ namespace Clawfoot.TestUtilities
             return (TModel)Activator.CreateInstance(typeof(TModel), true);
         }
 
-        public TestModelBuilder<TModel> WithValue<TMember>(Expression<Func<TModel, TMember>> memberExpression, TMember value, MemberTypes memberType = MemberTypes.Property)
+        public TestModelBuilder<TModel> With<TMember>(Expression<Func<TModel, TMember>> memberExpression, TMember value, MemberTypes memberType = MemberTypes.Property)
         {
             string memberName = ((MemberExpression)memberExpression.Body).Member.Name;
-            actions.Add(() => SetValue(memberName, value, memberType));
+            actions.Add(() => Set(memberName, value, memberType));
             return this;
-
+        }
+        
+        public TestModelBuilder<TModel> With<TMember>(Expression<Func<TModel, TMember>> memberExpression, Func<TestModelBuilder<TMember>, TestModelBuilder<TMember>> builder, MemberTypes memberType = MemberTypes.Property)
+            where TMember : class
+        {
+            TMember value = builder(new TestModelBuilder<TMember>()).Build();
+            string memberName = ((MemberExpression)memberExpression.Body).Member.Name;
+            actions.Add(() => Set(memberName, value, memberType));
+            return this;
         }
 
-        public TestModelBuilder<TModel> WithValue(string memberName, object value, MemberTypes memberType = MemberTypes.Property)
+        public TestModelBuilder<TModel> With(string memberName, object value, MemberTypes memberType = MemberTypes.Property)
         {
-            actions.Add(() => SetValue(memberName, value, memberType));
+            actions.Add(() => Set(memberName, value, memberType));
             return this;
         }
 
@@ -66,25 +83,25 @@ namespace Clawfoot.TestUtilities
         //---------------------------------------------------------
         //===== Private Helpers =====
 
-        private void SetValue(string name, object value, MemberTypes memberType)
+        private void Set(string name, object value, MemberTypes memberType)
         {
             if (memberType == MemberTypes.Property)
             {
-                SetPropertyValue(name, value);
+                SetProperty(name, value);
             }
             else if (memberType == MemberTypes.Field)
             {
-                SetFieldValue(name, value);
+                SetField(name, value);
             }
         }
 
-        private void SetPropertyValue(string name, object value)
+        private void SetProperty(string name, object value)
         {
             Type type = typeof(TModel);
             GetProperty(type, name).SetValue(instance, value);
         }
 
-        private void SetFieldValue(string name, object value)
+        private void SetField(string name, object value)
         {
             Type type = typeof(TModel);
             GetField(type, name).SetValue(instance, value);
